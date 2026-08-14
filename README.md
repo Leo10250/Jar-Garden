@@ -26,7 +26,7 @@ Windows PowerShell:
 macOS/Linux:
 
 ```bash
-./tools/validate.sh
+bash ./tools/validate.sh
 ```
 
 The validator imports/parses the project, runs all repository test suites in deterministic order, then performs a short headless main-scene smoke run. A failure returns a nonzero exit code.
