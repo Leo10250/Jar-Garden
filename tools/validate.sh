@@ -2,16 +2,8 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TEST_SUITES=(
-  "content_asset_tests.gd"
-  "environment_provider_tests.gd"
-  "phase2_tests.gd"
-  "mvp_simulation_tests.gd"
-  "plant_visual_tests.gd"
-  "main_integration_tests.gd"
-  "main_visual_tests.gd"
-  "stall_ui_tests.gd"
-)
+TEST_MANIFEST="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/test_suites.txt"
+TEST_SUITES=()
 
 resolve_godot() {
   if [[ -n "${GODOT_BIN:-}" ]]; then
@@ -39,6 +31,25 @@ resolve_godot() {
   return 1
 }
 
+load_test_suites() {
+  if [[ ! -f "$TEST_MANIFEST" ]]; then
+    echo "FAIL: Test manifest is missing: $TEST_MANIFEST" >&2
+    return 1
+  fi
+
+  local suite
+  while IFS= read -r suite || [[ -n "$suite" ]]; do
+    suite="${suite%$'\r'}"
+    [[ -z "$suite" || "$suite" == \#* ]] && continue
+    TEST_SUITES+=("$suite")
+  done < "$TEST_MANIFEST"
+
+  if [[ ${#TEST_SUITES[@]} -eq 0 ]]; then
+    echo "FAIL: Test manifest contains no test entrypoints: $TEST_MANIFEST" >&2
+    return 1
+  fi
+}
+
 run_step() {
   local label="$1"
   shift
@@ -53,10 +64,12 @@ run_step() {
 }
 
 GODOT="$(resolve_godot)"
+load_test_suites
 
 echo "Jar Garden validation"
 echo "Godot: $GODOT"
 echo "Repo:  $REPO_ROOT"
+echo "Tests: ${#TEST_SUITES[@]}"
 
 cd "$REPO_ROOT"
 
@@ -66,10 +79,10 @@ run_step "project import / parse" \
   --import
 
 for suite in "${TEST_SUITES[@]}"; do
-  run_step "test $suite" \
+  run_step "test ${suite##*/}" \
     --headless \
     --path "$REPO_ROOT" \
-    --script "res://tests/$suite"
+    --script "$suite"
 done
 
 run_step "main scene smoke" \
