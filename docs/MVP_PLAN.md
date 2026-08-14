@@ -1,225 +1,253 @@
-# Jar Garden — MVP Plan
+# Jar Garden — MVP Roadmap and Status
 
-## Goal
+## Purpose
 
-The first MVP should answer:
+This document tracks **what is implemented now and what remains next**. It is not the product-design source of truth; normative behavior belongs in `docs/GAME_DESIGN.md`.
+
+Status labels:
+
+- **Implemented** — present in the current prototype and covered by meaningful executable validation.
+- **Substantially implemented** — the intended MVP capability exists, with polish/content/tuning still expected.
+- **Partial** — meaningful work exists but the phase is not complete.
+- **Deferred** — intentionally not part of the current MVP.
+
+The original phase history is retained because it explains how the vertical slice evolved, but agents must use the status below rather than treating every later phase as future work.
+
+## MVP Question
+
+The MVP should answer:
 
 > Is the loop of caring + waiting + growth + reproduction + visible mutation + collection enjoyable enough to continue building?
 
-The visual identity of the creatures matters to this test.
-
-The basic plant is a **cute white dumpling/blob with a face**.
-
-Mutations should eventually feel rewarding partly because they visibly change the creature through **color and/or decorations/accessories**.
-
-Do not implement the entire long-term design at once.
+The common creature is a cute white dumpling/blob with a face. Visible mutation/discovery is a major emotional reward.
 
 ## Phase 0 — Foundation
 
-Status: project already created.
+**Status: Implemented**
 
-Keep:
-- Godot 4.7.x
-- Mobile renderer
-- GDScript
-- portrait mobile target
-- Git
-- minimal repo structure
+Implemented:
 
-Foundation work as needed:
-- confirm project opens/runs
-- confirm `main.tscn` is a valid runnable main scene
-- establish portrait-responsive layout
-- establish simple save approach when persistence begins
+- Godot 4.7.x project using Mobile renderer and GDScript.
+- Portrait mobile configuration and runnable main scene.
+- Git-friendly scenes/resources/scripts.
+- Local project structure for assets, resources, localization, tests, and tools.
 
-Do not add gameplay systems merely as setup.
+Remaining:
+
+- Device/export validation on real iOS and Android targets as the project approaches shipping quality.
 
 ## Phase 1 — Visual / Interaction Prototype
 
-Goal: produce a runnable main-screen prototype and validate the **basic creature identity**.
+**Status: Implemented and expanded**
 
-Include:
-- forest placeholder background
-- large central glass jar
-- simple sun or moon presentation
-- **5 placeholder base plants**
-- each placeholder base plant should read as:
-  - a small white rounded/dumpling/blob-like creature
-  - with a simple cute face/expression
-- Water button
-- Stall button
-- portrait-responsive layout
-- basic plant dragging with mouse/touch if practical
+Implemented:
 
-Important:
-- Do not use generic green circles or realistic seedlings as the main placeholder if a simple white blob with face can be represented directly.
-- The placeholder should preserve the confirmed creature concept while remaining easy to replace with final art.
+- central glass-jar stage,
+- responsive portrait main screen,
+- five initial common blob plants,
+- touch/mouse plant dragging,
+- Water and Stall actions,
+- safe-area-aware UI,
+- modern shared Theme and responsive HUD/action dock,
+- production-prototype blob artwork and layered environment art.
 
-Do not implement yet unless specifically requested:
-- full lifecycle
-- reproduction simulation
-- mutation logic
-- economy
-- collection
-- real weather
-- complex water simulation
+The prototype no longer relies on generic green-circle/realistic-plant placeholders.
 
-The prototype should prove:
-1. Codex can reliably edit Godot scenes/UI.
-2. The main jar composition works.
-3. The five white blob plants already communicate the intended cute collectible direction.
+Remaining:
+
+- ongoing animation/presentation polish based on playtesting,
+- final-device visual tuning.
 
 ## Phase 2 — Plant State + Lifecycle + Save
 
-Implement a minimal plant-instance model.
+**Status: Implemented**
 
-Add:
-- young/adult/old lifecycle
-- configurable stage durations
-- local save/load
-- real-world elapsed-time advancement
-- preservation of plant position/state
+Implemented:
 
-Visual lifecycle differences are TBD.
+- Young / Adult / Old lifecycle,
+- centralized prototype durations,
+- stable per-instance IDs and normalized positions,
+- local JSON persistence,
+- save schema and migrations,
+- safe write/backup/recovery behavior,
+- real elapsed-time advancement,
+- persisted deterministic RNG state,
+- birth context and cultivation history,
+- online/offline-equivalence coverage.
 
-Do not invent permanent young/adult/old designs.
+Remaining:
 
-Use placeholder durations if necessary, centralized and labeled.
+- future schema migrations only as new persisted features require them.
 
 ## Phase 3 — Water
 
-Implement the simplest model that creates meaningful position-dependent water exposure.
+**Status: Implemented**
 
-Requirements:
-- Water button adds water.
-- Water conceptually enters from the top.
-- Different positions can lead to different exposure.
-- Repeated watering increases wetness.
-- Water decreases with elapsed time.
-- Support an extreme wet/submerged state.
+Implemented:
 
-Do not implement realistic fluid dynamics.
+- Water action increases pooled jar water,
+- two-dimensional direct-watering falloff,
+- repeated watering/wetness accumulation,
+- evaporation over elapsed time,
+- exact wetness/submersion integration across offline intervals,
+- partial/full submersion,
+- visible rear water + foreground translucent water,
+- animated water surface, pour, drops, and ripples,
+- retargetable short water-level tween.
+
+This remains a lightweight scalar model, not fluid physics.
+
+Remaining:
+
+- tuning and final visual polish based on playtesting.
 
 ## Phase 4 — Reproduction
 
-Implement:
-- only adults reproduce
-- touching/proximity requirement
-- elapsed-time requirement
-- same-type pair has higher reproduction likelihood
-- successful reproduction creates one young plant
-- per-plant adult reproduction count/limit
-- mutated plants can later be configured as harder to reproduce
+**Status: Implemented**
 
-Keep probabilities/durations configurable.
+Implemented:
 
-At this stage, offspring may still use simple placeholder visuals.
+- adult-only reproduction,
+- elapsed contact progress,
+- per-plant reproduction counts/limits,
+- same-variant success modifier,
+- variant reproduction difficulty,
+- deterministic offline reproduction,
+- authored visible hitbox geometry shared with reproduction contact logic,
+- parent IDs/variant context recorded on offspring,
+- capacity safeguards.
+
+Remaining:
+
+- balance tuning and additional content-driven reproduction rules only when design requires them.
 
 ## Phase 5 — Automatic Generation + Visible Mutation
 
-Implement automatic environmental spawning:
-- occurs over time
-- stops when jar capacity is full
-- can use current environmental state
-- can create the common/base plant
-- can occasionally create a mutation/variant
+**Status: Substantially implemented**
 
-Implement a **simple, data-driven visible mutation system**.
+Implemented:
 
-The first mutation prototype should test obvious visual differences, such as:
-- body color variation
-- one simple head decoration/accessory
-- one simple equipment-like accessory
-- combinations if still simple
+- environmental spawn schedule,
+- deterministic persisted RNG,
+- capacity handling without spawn backlog bursts,
+- common-plant fallback,
+- mutation probability and data-driven recipe resolution,
+- cultivation profiles using environment, moisture/submersion, light, source, and optional parent requirements,
+- exact day/night duration calculation across arbitrary elapsed intervals,
+- ten prototype variants using seven silhouette families,
+- nine non-base prototype mutation recipes,
+- discovery registration on successful mutation.
 
-Important:
-- these are placeholder mutation traits, not final art
-- exact mutation colors/accessories are TBD
-- do not build realistic genetics
-- do not build a complex trait inheritance engine unless later requested
+Remaining:
 
-Start with only enough variants to test whether seeing a visually different newborn feels exciting.
+- continued recipe/balance iteration through playtesting,
+- additional variants only when they improve the core loop rather than increasing content count for its own sake.
 
 ## Phase 6 — Collection + Stall + Economy
 
-Add:
-- discovered type/variant tracking
-- encyclopedia UI
-- sell plants
-- young sell value = 1 coin
-- old sell value = 1 coin
-- adult value based on type/rarity
-- buy young plants only for previously discovered types/variants
-- local currency persistence
+**Status: Implemented**
 
-The collection should visually show discovered blob variants so color/accessory differences contribute to collecting.
+Implemented:
 
-Keep permanent pricing configurable.
+- discovered-variant tracking,
+- Collection UI with discovered details and undiscovered hints,
+- Market → Buy / Sell,
+- Customize → Jars / Places,
+- reusable responsive cards,
+- custom segmented navigation over hidden native tabs,
+- young/old low sale value and configured adult values,
+- buying only discovered plant types,
+- local coin persistence,
+- jar/environment purchase and selection,
+- persistence/reload integration tests,
+- ecology-recovery safeguards preventing a permanently empty jar or free-plant coin exploit.
+
+Remaining:
+
+- economy tuning and usability polish from playtesting.
 
 ## Phase 7 — Expanded Environments and Jars
 
-Only after the core loop works:
+**Status: Partial**
 
-- additional backgrounds/environments
-- different jars/materials
-- environmental modifiers
-- additional plant variants
-- more mutation paths
-- richer accessory/decor sets
+Already implemented:
+
+- 2 selectable jars,
+- 3 selectable environments: Forest, Window Nook, Rainforest,
+- environment far/mid/front artwork plus thumbnails,
+- jar/environment prototype modifiers,
+- environment-specific mutation recipes,
+- production-prototype art manifest and deterministic asset preparation.
+
+Remaining:
+
+- decide whether additional jars/environments materially improve the MVP,
+- add content only after core-loop playtesting indicates a need,
+- refine environment/jar identity and balancing.
 
 ## Phase 8 — Real Weather
 
-Future, not MVP.
+**Status: Deferred**
 
-Only after explicit product/technical decision:
-- decide how user location is handled
-- decide weather source
-- decide privacy/permission UX
-- decide offline fallback/caching
-- integrate real weather
+Not part of the current MVP.
 
-Do not add an external weather API before this decision.
+Before implementation, explicitly decide:
 
-## Explicitly Deferred
+- how user location is handled,
+- weather source/provider,
+- privacy and permissions UX,
+- offline fallback/caching,
+- how real weather maps into game mechanics without undermining deterministic/local behavior.
 
-Do not build during early MVP unless explicitly requested:
+Do not add an external weather API before those decisions.
 
-- account system
-- backend
-- cloud save
-- multiplayer
-- player-to-player trading
-- ads
-- IAP
-- analytics
-- push notifications
-- complex auction system
-- realistic genetics
-- realistic fluid simulation
-- complex temperature model
-- anti-clock-cheat
-- many jars/backgrounds
-- dozens/hundreds of plants
-- large production art pipeline
-- advanced facial-expression state system
-- complicated accessory equipment system
-- complicated procedural character generator
+## Current Vertical-Slice Priorities
 
-## MVP Development Philosophy
+The project is no longer waiting for core systems to be built. Near-term work should favor:
 
-Each phase should create something runnable and reviewable.
+1. playtesting the care → wait → discovery loop,
+2. tuning lifecycle/water/spawn/reproduction/mutation/economy values,
+3. presentation and interaction polish,
+4. real-device mobile validation,
+5. focused content iteration based on observed player experience,
+6. keeping deterministic simulation/save invariants intact,
+7. keeping documentation and executable validation synchronized.
+
+Do not respond to this roadmap by rebuilding already implemented phases.
+
+## Explicitly Deferred Unless Requested
+
+- account system,
+- backend,
+- cloud save,
+- multiplayer/player trading,
+- ads,
+- IAP,
+- analytics,
+- push-notification pressure loops,
+- complex auction system,
+- realistic genetics,
+- realistic fluid simulation,
+- complex temperature simulation,
+- anti-clock-cheat,
+- hundreds of variants,
+- complicated procedural character generation,
+- speculative service/manager architecture.
+
+## Development Philosophy
+
+Each change should remain runnable and reviewable.
 
 Prefer:
 
 ```text
-small task
--> inspect diff
--> run/validate
--> playtest
--> commit checkpoint
--> next task
+small coherent task
+-> inspect relevant implementation/tests
+-> change the owning code/data
+-> update durable tests/invariants
+-> run tools/validate.*
+-> playtest when presentation/feel matters
+-> update the owning doc if the contract/status changed
 ```
 
-over one giant request.
-
-Codex must not implement later phases merely because they are described here.
+Do not implement future systems merely because they are mentioned here.
