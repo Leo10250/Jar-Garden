@@ -1,0 +1,40 @@
+[gd_resource type="Resource" script_class="MvpTuning" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/mvp_tuning.gd" id="1_tuning"]
+
+[resource]
+script = ExtResource("1_tuning")
+young_duration_seconds = 60.0
+adult_duration_seconds = 120.0
+foreground_tick_seconds = 1.0
+autosave_interval_seconds = 30.0
+water_level_per_press = 0.22
+top_wetness_per_press = 0.42
+bottom_watering_multiplier = 0.25
+water_evaporation_per_second = 0.0025
+wetness_decay_per_second = 0.0018
+submerged_wetting_per_second = 0.015
+plant_water_footprint_height = 0.16
+extreme_wetness_threshold = 0.85
+day_start_hour = 6
+day_end_hour = 18
+day_spawn_multiplier = 1.05
+night_spawn_multiplier = 0.95
+day_reproduction_multiplier = 1.0
+night_reproduction_multiplier = 1.1
+day_mutation_multiplier = 0.9
+night_mutation_multiplier = 1.15
+reproduction_contact_distance = 0.17
+reproduction_attempt_seconds = 20.0
+reproduction_base_success_chance = 0.55
+same_variant_success_multiplier = 1.35
+reproduction_mutation_chance = 0.16
+offspring_position_jitter = 0.05
+reproduction_limit_min = 1
+reproduction_limit_max = 5
+spawn_interval_min_seconds = 45.0
+spawn_interval_max_seconds = 75.0
+spawn_base_success_chance = 0.65
+spawn_mutation_chance = 0.18
+maximum_events_per_advance = 512
+initial_coins = 20

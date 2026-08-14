@@ -1,0 +1,142 @@
+[gd_resource type="Resource" script_class="ContentCatalog" load_steps=14 format=3]
+
+[ext_resource type="Script" path="res://scripts/content_catalog.gd" id="1_catalog"]
+[ext_resource type="Script" path="res://scripts/plant_variant_definition.gd" id="2_variant"]
+[ext_resource type="Script" path="res://scripts/jar_definition.gd" id="3_jar"]
+[ext_resource type="Script" path="res://scripts/environment_definition.gd" id="4_environment"]
+
+[sub_resource type="Resource" id="PlantVariant_base_common"]
+script = ExtResource("2_variant")
+id = &"base_common"
+display_name = "Common Blob"
+description = "Prototype/TBD: the familiar soft white dumpling-like plant."
+rarity = &"common"
+body_color = Color(0.985, 0.985, 0.97, 1)
+head_accessory = &"none"
+equipment = &"none"
+mutation_weight = 0.0
+reproduction_difficulty = 1.0
+adult_sell_value = 4
+young_buy_price = 6
+
+[sub_resource type="Resource" id="PlantVariant_blush_color"]
+script = ExtResource("2_variant")
+id = &"blush_color"
+display_name = "Blush Blob"
+description = "Prototype/TBD color mutation used to test an immediately visible discovery."
+rarity = &"uncommon"
+body_color = Color(0.96, 0.69, 0.73, 1)
+head_accessory = &"none"
+equipment = &"none"
+mutation_weight = 1.0
+reproduction_difficulty = 1.1
+adult_sell_value = 9
+young_buy_price = 15
+
+[sub_resource type="Resource" id="PlantVariant_leaf_cap"]
+script = ExtResource("2_variant")
+id = &"leaf_cap"
+display_name = "Leaf-Cap Blob"
+description = "Prototype/TBD headwear mutation represented by a simple leaf-cap selector."
+rarity = &"uncommon"
+body_color = Color(0.985, 0.985, 0.97, 1)
+head_accessory = &"leaf_cap"
+equipment = &"none"
+mutation_weight = 0.65
+reproduction_difficulty = 1.2
+adult_sell_value = 14
+young_buy_price = 23
+
+[sub_resource type="Resource" id="PlantVariant_tiny_gardener"]
+script = ExtResource("2_variant")
+id = &"tiny_gardener"
+display_name = "Tiny Gardener"
+description = "Prototype/TBD combination mutation with simple headwear and equipment selectors."
+rarity = &"rare"
+body_color = Color(0.72, 0.86, 0.78, 1)
+head_accessory = &"sun_hat"
+equipment = &"watering_can"
+mutation_weight = 0.3
+reproduction_difficulty = 1.35
+adult_sell_value = 22
+young_buy_price = 36
+
+[sub_resource type="Resource" id="Jar_default_glass"]
+script = ExtResource("3_jar")
+id = &"default_glass"
+display_name = "Clear Glass Jar"
+description = "Prototype/TBD default jar with neutral modifiers."
+price = 0
+capacity = 12
+glass_fill_color = Color(0.78, 0.93, 0.96, 0.24)
+glass_border_color = Color(0.89, 0.98, 1, 0.82)
+evaporation_modifier = 1.0
+spawn_modifier = 1.0
+reproduction_modifier = 1.0
+
+[sub_resource type="Resource" id="Jar_moss_glass"]
+script = ExtResource("3_jar")
+id = &"moss_glass"
+display_name = "Moss-Tinted Jar"
+description = "Prototype/TBD alternative jar for testing capacity and environment modifiers."
+price = 80
+capacity = 16
+glass_fill_color = Color(0.64, 0.84, 0.7, 0.3)
+glass_border_color = Color(0.72, 0.92, 0.76, 0.86)
+evaporation_modifier = 0.85
+spawn_modifier = 1.05
+reproduction_modifier = 1.1
+
+[sub_resource type="Resource" id="Environment_forest"]
+script = ExtResource("4_environment")
+id = &"forest"
+display_name = "Forest"
+description = "Prototype/TBD default environment with neutral modifiers."
+price = 0
+sky_color = Color(0.58, 0.76, 0.69, 1)
+ground_color = Color(0.24, 0.43, 0.29, 1)
+accent_color = Color(0.31, 0.53, 0.39, 1)
+visual_style = &"forest"
+local_weather_label = "Calm"
+evaporation_modifier = 1.0
+spawn_modifier = 1.0
+reproduction_modifier = 1.0
+mutation_modifier = 1.0
+
+[sub_resource type="Resource" id="Environment_indoor_window"]
+script = ExtResource("4_environment")
+id = &"indoor_window"
+display_name = "Window Nook"
+description = "Prototype/TBD sheltered environment with a warm indoor palette."
+price = 55
+sky_color = Color(0.83, 0.78, 0.67, 1)
+ground_color = Color(0.46, 0.34, 0.25, 1)
+accent_color = Color(0.91, 0.71, 0.44, 1)
+visual_style = &"indoor"
+local_weather_label = "Sheltered"
+evaporation_modifier = 0.9
+spawn_modifier = 0.85
+reproduction_modifier = 1.05
+mutation_modifier = 0.9
+
+[sub_resource type="Resource" id="Environment_rainforest"]
+script = ExtResource("4_environment")
+id = &"rainforest"
+display_name = "Rainforest"
+description = "Prototype/TBD humid environment for testing stronger environmental modifiers."
+price = 130
+sky_color = Color(0.38, 0.64, 0.5, 1)
+ground_color = Color(0.12, 0.33, 0.21, 1)
+accent_color = Color(0.52, 0.78, 0.38, 1)
+visual_style = &"rainforest"
+local_weather_label = "Humid"
+evaporation_modifier = 0.7
+spawn_modifier = 1.2
+reproduction_modifier = 1.1
+mutation_modifier = 1.25
+
+[resource]
+script = ExtResource("1_catalog")
+plant_variants = Array[ExtResource("2_variant")]([SubResource("PlantVariant_base_common"), SubResource("PlantVariant_blush_color"), SubResource("PlantVariant_leaf_cap"), SubResource("PlantVariant_tiny_gardener")])
+jars = Array[ExtResource("3_jar")]([SubResource("Jar_default_glass"), SubResource("Jar_moss_glass")])
+environments = Array[ExtResource("4_environment")]([SubResource("Environment_forest"), SubResource("Environment_indoor_window"), SubResource("Environment_rainforest")])

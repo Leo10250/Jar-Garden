@@ -1,0 +1,112 @@
+extends SceneTree
+
+
+const Provider = preload("res://scripts/environment_provider.gd")
+
+var _failures: int = 0
+
+
+func _init() -> void:
+	_test_day_boundaries_with_positive_bias()
+	_test_negative_bias_wraps_to_previous_day()
+	_test_wrapped_day_window()
+	_test_environment_labels_are_offline_inputs()
+
+	if _failures == 0:
+		print("Environment provider tests passed.")
+		quit(0)
+	else:
+		push_error("Environment provider tests failed: %d" % _failures)
+		quit(1)
+
+
+func _test_day_boundaries_with_positive_bias() -> void:
+	var bias_minutes := 120
+	var before_start := Provider.get_environment_with_timezone_bias(
+		4 * 3600,
+		"Clear",
+		7,
+		19,
+		bias_minutes,
+	)
+	var at_start := Provider.get_environment_with_timezone_bias(
+		5 * 3600,
+		"Clear",
+		7,
+		19,
+		bias_minutes,
+	)
+	var before_end := Provider.get_environment_with_timezone_bias(
+		16 * 3600,
+		"Clear",
+		7,
+		19,
+		bias_minutes,
+	)
+	var at_end := Provider.get_environment_with_timezone_bias(
+		17 * 3600,
+		"Clear",
+		7,
+		19,
+		bias_minutes,
+	)
+
+	_expect(before_start.light_state == Provider.NIGHT, "The hour before day start is night.")
+	_expect(at_start.local_hour == 7, "The explicit timezone bias determines local hour.")
+	_expect(at_start.light_state == Provider.DAY, "Day start is inclusive.")
+	_expect(before_end.light_state == Provider.DAY, "The hour before day end is day.")
+	_expect(at_end.light_state == Provider.NIGHT, "Day end is exclusive.")
+
+
+func _test_negative_bias_wraps_to_previous_day() -> void:
+	var snapshot := Provider.get_environment_with_timezone_bias(
+		2 * 3600,
+		"Humid",
+		7,
+		19,
+		-300,
+	)
+	_expect(snapshot.local_hour == 21, "A negative timezone bias can wrap to the previous day.")
+	_expect(snapshot.light_state == Provider.NIGHT, "The wrapped local hour determines light state.")
+
+
+func _test_wrapped_day_window() -> void:
+	_expect(
+		Provider.get_light_state_for_hour(22, 20, 6) == Provider.DAY,
+		"A day window may wrap across midnight.",
+	)
+	_expect(
+		Provider.get_light_state_for_hour(6, 20, 6) == Provider.NIGHT,
+		"A wrapped day window still uses an exclusive end.",
+	)
+
+
+func _test_environment_labels_are_offline_inputs() -> void:
+	var day_snapshot := Provider.get_environment_with_timezone_bias(
+		12 * 3600,
+		"  Clear  ",
+		7,
+		19,
+		0,
+	)
+	var night_snapshot := Provider.get_environment_with_timezone_bias(
+		22 * 3600,
+		"Humid",
+		7,
+		19,
+		0,
+	)
+
+	_expect(typeof(day_snapshot.light_state) == TYPE_STRING_NAME, "Light state is a stable StringName.")
+	_expect(day_snapshot.light_state == &"day", "Day uses the stable day identifier.")
+	_expect(day_snapshot.weather_label == "Clear", "Weather is a trimmed caller-provided label.")
+	_expect(day_snapshot.display_label == "Day - Clear", "Day display label includes local weather.")
+	_expect(night_snapshot.light_state == &"night", "Night uses the stable night identifier.")
+	_expect(night_snapshot.display_label == "Night - Humid", "Night display label includes local weather.")
+
+
+func _expect(condition: bool, message: String) -> void:
+	if condition:
+		return
+	_failures += 1
+	push_error(message)

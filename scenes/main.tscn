@@ -1,7 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://b43f17faj48q1"]
+[gd_scene load_steps=17 format=3 uid="uid://b43f17faj48q1"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/plant.tscn" id="2_plant"]
+[ext_resource type="Resource" path="res://resources/prototype_mvp_tuning.tres" id="3_tuning"]
+[ext_resource type="Resource" path="res://resources/prototype_content_catalog.tres" id="4_catalog"]
+[ext_resource type="PackedScene" path="res://scenes/stall_panel.tscn" id="5_stall"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_foliage_far"]
 bg_color = Color(0.31, 0.53, 0.39, 1)
@@ -98,6 +101,20 @@ corner_radius_top_right = 28
 corner_radius_bottom_right = 28
 corner_radius_bottom_left = 28
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_save_error"]
+bg_color = Color(0.105, 0.16, 0.13, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.64, 0.76, 0.62, 0.9)
+corner_radius_top_left = 26
+corner_radius_top_right = 26
+corner_radius_bottom_right = 26
+corner_radius_bottom_left = 26
+shadow_color = Color(0.02, 0.05, 0.04, 0.55)
+shadow_size = 18
+
 [node name="Main" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -106,6 +123,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_main")
+plant_scene = ExtResource("2_plant")
+tuning = ExtResource("3_tuning")
+content_catalog = ExtResource("4_catalog")
+
+[node name="SimulationTimer" type="Timer" parent="."]
+wait_time = 1.0
+autostart = true
+
+[node name="AutosaveTimer" type="Timer" parent="."]
+wait_time = 30.0
+autostart = true
 
 [node name="ForestBackdrop" type="Control" parent="."]
 layout_mode = 1
@@ -135,6 +163,96 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0.89, 0.94, 0.82, 0.2)
+
+[node name="IndoorWindow" type="Control" parent="ForestBackdrop"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LeftFrame" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
+layout_mode = 1
+anchor_right = 0.075
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.28, 0.19, 0.13, 0.92)
+
+[node name="RightFrame" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
+layout_mode = 1
+anchor_left = 0.925
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.28, 0.19, 0.13, 0.92)
+
+[node name="TopFrame" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.075
+mouse_filter = 2
+color = Color(0.28, 0.19, 0.13, 0.92)
+
+[node name="Mullion" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
+layout_mode = 1
+anchor_left = 0.485
+anchor_right = 0.515
+anchor_bottom = 0.78
+mouse_filter = 2
+color = Color(0.35, 0.24, 0.16, 0.72)
+
+[node name="Sill" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
+layout_mode = 1
+anchor_top = 0.72
+anchor_right = 1.0
+anchor_bottom = 0.79
+mouse_filter = 2
+color = Color(0.35, 0.24, 0.16, 0.92)
+
+[node name="RainforestVines" type="Control" parent="ForestBackdrop"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Vine01" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
+layout_mode = 1
+anchor_left = 0.18
+anchor_right = 0.195
+anchor_bottom = 0.38
+mouse_filter = 2
+color = Color(0.12, 0.38, 0.18, 0.85)
+
+[node name="Vine02" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
+layout_mode = 1
+anchor_left = 0.39
+anchor_right = 0.405
+anchor_bottom = 0.27
+mouse_filter = 2
+color = Color(0.12, 0.38, 0.18, 0.78)
+
+[node name="Vine03" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
+layout_mode = 1
+anchor_left = 0.62
+anchor_right = 0.635
+anchor_bottom = 0.32
+mouse_filter = 2
+color = Color(0.12, 0.38, 0.18, 0.82)
+
+[node name="Vine04" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
+layout_mode = 1
+anchor_left = 0.81
+anchor_right = 0.825
+anchor_bottom = 0.43
+mouse_filter = 2
+color = Color(0.12, 0.38, 0.18, 0.86)
 
 [node name="DistantFoliage" type="Control" parent="ForestBackdrop"]
 layout_mode = 1
@@ -227,6 +345,37 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_sun")
 
+[node name="StatusBar" type="HBoxContainer" parent="SafeArea/GameArea"]
+layout_mode = 1
+anchor_right = 0.78
+anchor_bottom = 0.055
+offset_right = -8.0
+theme_override_constants/separation = 12
+
+[node name="CoinsLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11, 0.23, 0.17, 1)
+theme_override_font_sizes/font_size = 18
+text = "Coins 0"
+
+[node name="WaterLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.27, 0.34, 1)
+theme_override_font_sizes/font_size = 18
+text = "Dry"
+
+[node name="LightLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.19, 0.12, 1)
+theme_override_font_sizes/font_size = 18
+text = "Day"
+
+[node name="CapacityLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.11, 0.23, 0.17, 1)
+theme_override_font_sizes/font_size = 18
+text = "5/12"
+
 [node name="JarSlot" type="AspectRatioContainer" parent="SafeArea/GameArea"]
 layout_mode = 1
 anchor_top = 0.06
@@ -259,50 +408,15 @@ anchor_right = 0.91
 anchor_bottom = 0.93
 mouse_filter = 1
 
-[node name="Plant01" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
-layout_mode = 0
-anchor_left = 0.07
-anchor_top = 0.44
-anchor_right = 0.07
-anchor_bottom = 0.44
-offset_right = 96.0
-offset_bottom = 88.0
-
-[node name="Plant02" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
-layout_mode = 0
-anchor_left = 0.36
-anchor_top = 0.57
-anchor_right = 0.36
-anchor_bottom = 0.57
-offset_right = 96.0
-offset_bottom = 88.0
-
-[node name="Plant03" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
-layout_mode = 0
-anchor_left = 0.68
-anchor_top = 0.43
-anchor_right = 0.68
-anchor_bottom = 0.43
-offset_right = 96.0
-offset_bottom = 88.0
-
-[node name="Plant04" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
-layout_mode = 0
-anchor_left = 0.2
-anchor_top = 0.73
-anchor_right = 0.2
-anchor_bottom = 0.73
-offset_right = 96.0
-offset_bottom = 88.0
-
-[node name="Plant05" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
-layout_mode = 0
-anchor_left = 0.58
-anchor_top = 0.72
-anchor_right = 0.58
-anchor_bottom = 0.72
-offset_right = 96.0
-offset_bottom = 88.0
+[node name="WaterLevel" type="ColorRect" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds"]
+z_index = -5
+layout_mode = 1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.25, 0.67, 0.86, 0.42)
 
 [node name="GlassHighlight" type="ColorRect" parent="SafeArea/GameArea/JarSlot/Jar"]
 z_index = 20
@@ -372,3 +486,101 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_stall_button")
 theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 text = "Stall"
+
+[node name="ToastLabel" type="Label" parent="SafeArea/GameArea"]
+visible = false
+layout_mode = 1
+anchor_left = 0.15
+anchor_top = 0.82
+anchor_right = 0.85
+anchor_bottom = 0.875
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.96, 1, 0.94, 1)
+theme_override_colors/font_shadow_color = Color(0.08, 0.16, 0.12, 0.85)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 20
+text = "Garden updated"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StallPanel" parent="." instance=ExtResource("5_stall")]
+z_index = 100
+
+[node name="SaveErrorOverlay" type="Control" parent="."]
+visible = false
+z_index = 200
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Scrim" type="ColorRect" parent="SaveErrorOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.025, 0.055, 0.045, 0.86)
+
+[node name="SafeMargin" type="MarginContainer" parent="SaveErrorOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 48.0
+offset_right = -36.0
+offset_bottom = -48.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Center" type="CenterContainer" parent="SaveErrorOverlay/SafeMargin"]
+layout_mode = 2
+
+[node name="Panel" type="PanelContainer" parent="SaveErrorOverlay/SafeMargin/Center"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_save_error")
+
+[node name="Margin" type="MarginContainer" parent="SaveErrorOverlay/SafeMargin/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="Layout" type="VBoxContainer" parent="SaveErrorOverlay/SafeMargin/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Title" type="Label" parent="SaveErrorOverlay/SafeMargin/Center/Panel/Margin/Layout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.94, 0.76, 1)
+theme_override_font_sizes/font_size = 30
+text = "Save needs attention"
+horizontal_alignment = 1
+
+[node name="SaveErrorMessage" type="Label" parent="SaveErrorOverlay/SafeMargin/Center/Panel/Margin/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.88, 0.94, 0.86, 1)
+theme_override_font_sizes/font_size = 20
+text = "Jar Garden preserved your save and locked this session."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="SaveErrorCloseButton" type="Button" parent="SaveErrorOverlay/SafeMargin/Center/Panel/Margin/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 66)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 22
+text = "Close Jar Garden"

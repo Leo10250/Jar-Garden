@@ -14,6 +14,7 @@ config/name="Jar Garden"
 run/main_scene="uid://b43f17faj48q1"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon.svg"
+config/quit_on_go_back=false
 
 [display]
 
