@@ -2,16 +2,7 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-$TestSuites = @(
-    "content_asset_tests.gd",
-    "environment_provider_tests.gd",
-    "phase2_tests.gd",
-    "mvp_simulation_tests.gd",
-    "plant_visual_tests.gd",
-    "main_integration_tests.gd",
-    "main_visual_tests.gd",
-    "stall_ui_tests.gd"
-)
+$TestManifest = Join-Path $PSScriptRoot "test_suites.txt"
 
 function Resolve-GodotExecutable {
     if (-not [string]::IsNullOrWhiteSpace($env:GODOT_BIN)) {
@@ -37,6 +28,24 @@ function Resolve-GodotExecutable {
     throw "Godot was not found. Add Godot to PATH or set GODOT_BIN to the Godot executable."
 }
 
+function Get-TestSuites {
+    if (-not (Test-Path -LiteralPath $TestManifest -PathType Leaf)) {
+        throw "Test manifest is missing: $TestManifest"
+    }
+
+    $suites = @(
+        Get-Content -LiteralPath $TestManifest |
+            ForEach-Object { $_.Trim() } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and -not $_.StartsWith("#") }
+    )
+
+    if ($suites.Count -eq 0) {
+        throw "Test manifest contains no test entrypoints: $TestManifest"
+    }
+
+    return $suites
+}
+
 function Invoke-GodotStep {
     param(
         [Parameter(Mandatory = $true)]
@@ -57,9 +66,12 @@ function Invoke-GodotStep {
 
 try {
     $script:Godot = Resolve-GodotExecutable
+    $testSuites = Get-TestSuites
+
     Write-Host "Jar Garden validation"
     Write-Host "Godot: $script:Godot"
     Write-Host "Repo:  $RepoRoot"
+    Write-Host "Tests: $($testSuites.Count)"
 
     Push-Location $RepoRoot
     try {
@@ -69,11 +81,11 @@ try {
             "--import"
         )
 
-        foreach ($suite in $TestSuites) {
-            Invoke-GodotStep "test $suite" @(
+        foreach ($suite in $testSuites) {
+            Invoke-GodotStep "test $(Split-Path $suite -Leaf)" @(
                 "--headless",
                 "--path", $RepoRoot,
-                "--script", "res://tests/$suite"
+                "--script", $suite
             )
         }
 
