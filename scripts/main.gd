@@ -1,11 +1,6 @@
 extends Control
 
 
-const BASE_MARGIN_LEFT: int = 32
-const BASE_MARGIN_TOP: int = 36
-const BASE_MARGIN_RIGHT: int = 32
-const BASE_MARGIN_BOTTOM: int = 40
-const MOBILE_PLATFORMS: PackedStringArray = ["Android", "iOS"]
 const MAX_SIMULATION_BATCHES_PER_UPDATE: int = 8
 
 @export var plant_scene: PackedScene
@@ -13,7 +8,7 @@ const MAX_SIMULATION_BATCHES_PER_UPDATE: int = 8
 @export var content_catalog: ContentCatalog
 @export var save_path: String = LocalSave.DEFAULT_SAVE_PATH
 
-@onready var safe_area: MarginContainer = $SafeArea
+@onready var safe_area: SafeAreaContainer = $SafeArea
 @onready var plant_bounds: Control = $SafeArea/GameArea/JarSlot/Jar/PlantBounds
 @onready var simulation_timer: Timer = $SimulationTimer
 @onready var autosave_timer: Timer = $AutosaveTimer
@@ -21,25 +16,25 @@ const MAX_SIMULATION_BATCHES_PER_UPDATE: int = 8
 @onready var stall_button: Button = $SafeArea/GameArea/BottomBar/StallButton
 @onready var stall_panel: StallPanel = $StallPanel
 @onready var water_level_visual: ColorRect = $SafeArea/GameArea/JarSlot/Jar/PlantBounds/WaterLevel
-@onready var coins_label: Label = $SafeArea/GameArea/StatusBar/CoinsLabel
-@onready var water_label: Label = $SafeArea/GameArea/StatusBar/WaterLabel
-@onready var light_label: Label = $SafeArea/GameArea/StatusBar/LightLabel
-@onready var capacity_label: Label = $SafeArea/GameArea/StatusBar/CapacityLabel
-@onready var sun_moon: Panel = $SafeArea/GameArea/SunSlot/SunMoon
+@onready var water_foreground_visual: ColorRect = $SafeArea/GameArea/JarSlot/Jar/PlantBounds/WaterForeground
+@onready var water_effects: WaterEffects = $SafeArea/GameArea/JarSlot/Jar/PlantBounds/WaterEffects
+@onready var coins_label: Button = $SafeArea/GameArea/StatusBar/CoinsLabel
+@onready var water_label: Button = $SafeArea/GameArea/StatusBar/WaterLabel
+@onready var light_label: Button = $SafeArea/GameArea/StatusBar/LightLabel
+@onready var capacity_label: Button = $SafeArea/GameArea/StatusBar/CapacityLabel
+@onready var sun_moon: Panel = $SafeArea/GameArea/JarSlot/Jar/SunSlot/SunMoon
 @onready var sky: ColorRect = $ForestBackdrop/Sky
-@onready var ground: ColorRect = $ForestBackdrop/Ground
 @onready var mist: ColorRect = $ForestBackdrop/Mist
-@onready var distant_foliage: Control = $ForestBackdrop/DistantFoliage
-@onready var canopy_top: Panel = $ForestBackdrop/DistantFoliage/CanopyTop
-@onready var crown_left: Panel = $ForestBackdrop/DistantFoliage/CrownLeft
-@onready var crown_right: Panel = $ForestBackdrop/DistantFoliage/CrownRight
-@onready var left_tree: ColorRect = $ForestBackdrop/LeftTree
-@onready var right_tree: ColorRect = $ForestBackdrop/RightTree
+@onready var background_far: TextureRect = $ForestBackdrop/FarLayer
+@onready var background_mid: TextureRect = $ForestBackdrop/MidLayer
+@onready var background_front: TextureRect = $ForestBackdrop/FrontLayer
+@onready var night_tint: ColorRect = $ForestBackdrop/NightTint
 @onready var indoor_window: Control = $ForestBackdrop/IndoorWindow
 @onready var rainforest_vines: Control = $ForestBackdrop/RainforestVines
 @onready var glass_back: Panel = $SafeArea/GameArea/JarSlot/Jar/GlassBack
 @onready var jar_outline: Panel = $SafeArea/GameArea/JarSlot/Jar/JarOutline
-@onready var toast_label: Label = $SafeArea/GameArea/ToastLabel
+@onready var toast_panel: PanelContainer = $ToastSafeArea/ToastLayer/ToastPanel
+@onready var toast_label: Label = $ToastSafeArea/ToastLayer/ToastPanel/ToastLabel
 @onready var save_error_overlay: Control = $SaveErrorOverlay
 @onready var save_error_message: Label = %SaveErrorMessage
 @onready var save_error_close_button: Button = %SaveErrorCloseButton
@@ -60,7 +55,6 @@ var _stall_button_focus_mode_before_stall: int = Control.FOCUS_ALL
 
 
 func _ready() -> void:
-	get_viewport().size_changed.connect(_apply_safe_area)
 	simulation_timer.timeout.connect(_on_simulation_timer_timeout)
 	autosave_timer.timeout.connect(_on_autosave_timer_timeout)
 	water_button.pressed.connect(_on_water_button_pressed)
@@ -73,8 +67,6 @@ func _ready() -> void:
 	stall_panel.visibility_changed.connect(_on_stall_panel_visibility_changed)
 	stall_panel.refresh_applied.connect(_on_stall_refresh_applied)
 	save_error_close_button.pressed.connect(_on_save_error_close_pressed)
-	_apply_safe_area()
-
 	if tuning == null or plant_scene == null or content_catalog == null:
 		push_error("Main requires its Plant scene, MVP tuning, and content catalog.")
 		return
@@ -120,9 +112,9 @@ func _initialize_game() -> void:
 		_simulation_caught_up = _advance_simulation_to(now)
 		var discovery_name := _get_new_discovery_name(previous_discoveries)
 		if not discovery_name.is_empty():
-			_show_toast("New discovery: %s" % discovery_name)
+			_show_toast(tr("TOAST_NEW_DISCOVERY") % discovery_name)
 		elif game_state.plants.size() > previous_count:
-			_show_toast("The garden changed while you were away")
+			_show_toast(tr("TOAST_AWAY_CHANGED"))
 		if load_result.recovered_from_backup:
 			push_warning(load_result.message)
 	elif load_result.status == LocalSave.LoadStatus.NOT_FOUND:
@@ -134,11 +126,7 @@ func _initialize_game() -> void:
 		_reconcile_content_state()
 		_simulation_caught_up = true
 		_saving_enabled = false
-		save_load_error_message = (
-			"Your local save could not be loaded safely. Jar Garden preserved it and "
-			+ "will not overwrite it. This session is locked so progress cannot be lost.\n\n"
-			+ load_result.message
-		)
+		save_load_error_message = tr("SAVE_LOAD_FAILED") + "\n\n" + load_result.message
 		push_warning("Local save was preserved but could not be loaded: %s" % load_result.message)
 
 	_sync_plant_views()
@@ -195,7 +183,7 @@ func _on_plant_drag_finished(instance_id: String, normalized_center: Vector2) ->
 	if plant_state == null:
 		return
 	if not _advance_to_now([instance_id]):
-		_show_toast("The garden is still catching up")
+		_show_toast(tr("TOAST_CATCHING_UP"))
 		return
 	plant_state.position_normalized = normalized_center.clamp(Vector2.ZERO, Vector2.ONE)
 	_update_hud()
@@ -225,12 +213,13 @@ func _on_water_button_pressed() -> void:
 	if not _saving_enabled or stall_panel.visible:
 		return
 	if not _advance_to_now():
-		_show_toast("The garden is still catching up")
+		_show_toast(tr("TOAST_CATCHING_UP"))
 		return
 	GardenSimulator.apply_watering(game_state, tuning)
 	_sync_plant_views()
 	_update_hud()
-	_show_toast("Water trickles in from above")
+	water_effects.play_pour()
+	_show_toast(tr("TOAST_WATERED"))
 	_save_game()
 
 
@@ -238,7 +227,7 @@ func _on_stall_button_pressed() -> void:
 	if not _saving_enabled or stall_panel.visible:
 		return
 	if not _advance_to_now():
-		_show_toast("The garden is still catching up")
+		_show_toast(tr("TOAST_CATCHING_UP"))
 		return
 	_refresh_stall()
 	stall_panel.open_panel()
@@ -248,32 +237,33 @@ func _on_buy_plant_requested(variant_id: StringName) -> void:
 	if not _saving_enabled:
 		return
 	if not _advance_to_now():
-		_show_toast("The garden is still catching up")
+		_show_toast(tr("TOAST_CATCHING_UP"))
 		return
 	if _stall_state_changed_during_last_advance:
-		_show_toast("The Stall just updated - please tap again")
+		_show_toast(tr("TOAST_STALL_UPDATED"))
 		return
 	var definition := content_catalog.get_variant(variant_id)
 	if definition == null or variant_id not in game_state.discovered_variant_ids:
-		_show_toast("Discover that blob before buying it")
+		_show_toast(tr("TOAST_DISCOVER_FIRST"))
 		return
 	if game_state.plants.size() >= _get_active_capacity():
-		_show_toast("This jar is full")
+		_show_toast(tr("TOAST_JAR_FULL"))
 		return
 	if game_state.coins < definition.young_buy_price:
-		_show_toast("Not enough coins")
+		_show_toast(tr("TOAST_NOT_ENOUGH_COINS"))
 		return
 
 	game_state.coins -= definition.young_buy_price
-	game_state.add_plant(
+	game_state.spawn_plant_with_context(
 		variant_id,
 		_get_open_spawn_position(),
 		game_state.last_simulated_unix_seconds,
 		tuning,
+		PlantState.SOURCE_PURCHASE,
 	)
 	_sync_plant_views()
 	_update_hud()
-	_show_toast("A young %s joined the jar" % definition.display_name)
+	_show_toast(tr("TOAST_PLANT_JOINED") % _localized_content_name(definition))
 	_save_game()
 	_refresh_stall()
 
@@ -282,13 +272,17 @@ func _on_sell_plant_requested(instance_id: String) -> void:
 	if not _saving_enabled:
 		return
 	if not _advance_to_now():
-		_show_toast("The garden is still catching up")
+		_show_toast(tr("TOAST_CATCHING_UP"))
 		return
 	if _stall_state_changed_during_last_advance:
-		_show_toast("The Stall just updated - please tap again")
+		_show_toast(tr("TOAST_STALL_UPDATED"))
 		return
 	var plant_state := game_state.find_plant(instance_id)
 	if plant_state == null:
+		return
+	if not game_state.can_sell_plant(plant_state):
+		_show_toast(tr("TOAST_ANCHOR_PROTECTED"))
+		_refresh_stall()
 		return
 	var definition := content_catalog.get_variant(plant_state.variant_id)
 	var sell_value: int = 1
@@ -297,12 +291,14 @@ func _on_sell_plant_requested(instance_id: String) -> void:
 		and definition != null
 	):
 		sell_value = definition.adult_sell_value
-	if not game_state.remove_plant(instance_id):
+	if plant_state.birth_source == PlantState.SOURCE_RECOVERY:
+		sell_value = 0
+	if not game_state.remove_plant(instance_id, tuning):
 		return
 	game_state.coins += sell_value
 	_sync_plant_views()
 	_update_hud()
-	_show_toast("Sold for %d coin%s" % [sell_value, "" if sell_value == 1 else "s"])
+	_show_toast(tr("TOAST_SOLD") % sell_value)
 	_save_game()
 	_refresh_stall()
 
@@ -311,25 +307,25 @@ func _on_jar_action_requested(jar_id: StringName) -> void:
 	if not _saving_enabled:
 		return
 	if not _advance_to_now():
-		_show_toast("The garden is still catching up")
+		_show_toast(tr("TOAST_CATCHING_UP"))
 		return
 	if _stall_state_changed_during_last_advance:
-		_show_toast("The Stall just updated - please tap again")
+		_show_toast(tr("TOAST_STALL_UPDATED"))
 		return
 	var definition := content_catalog.get_jar(jar_id)
 	if definition == null:
 		return
 	if not game_state.owns_jar(jar_id):
 		if game_state.coins < definition.price:
-			_show_toast("Not enough coins")
+			_show_toast(tr("TOAST_NOT_ENOUGH_COINS"))
 			return
 		game_state.coins -= definition.price
 		game_state.owned_jar_ids.append(jar_id)
 	if game_state.plants.size() > definition.capacity:
-		_show_toast("Move or sell plants before using that jar")
+		_show_toast(tr("TOAST_JAR_CAPACITY_BLOCKED"))
 	else:
 		game_state.active_jar_id = jar_id
-		_show_toast("Using %s" % definition.display_name)
+		_show_toast(tr("TOAST_USING_JAR") % _localized_content_name(definition))
 	_apply_content_presentation()
 	_update_hud()
 	_save_game()
@@ -340,24 +336,28 @@ func _on_environment_action_requested(environment_id: StringName) -> void:
 	if not _saving_enabled:
 		return
 	if not _advance_to_now():
-		_show_toast("The garden is still catching up")
+		_show_toast(tr("TOAST_CATCHING_UP"))
 		return
 	if _stall_state_changed_during_last_advance:
-		_show_toast("The Stall just updated - please tap again")
+		_show_toast(tr("TOAST_STALL_UPDATED"))
 		return
 	var definition := content_catalog.get_environment(environment_id)
 	if definition == null:
 		return
 	if not game_state.owns_environment(environment_id):
 		if game_state.coins < definition.price:
-			_show_toast("Not enough coins")
+			_show_toast(tr("TOAST_NOT_ENOUGH_COINS"))
 			return
 		game_state.coins -= definition.price
 		game_state.owned_environment_ids.append(environment_id)
-	game_state.active_environment_id = environment_id
+	GardenSimulator.settle_environment_change(
+		game_state,
+		environment_id,
+		game_state.last_simulated_unix_seconds,
+	)
 	_apply_content_presentation()
 	_update_hud()
-	_show_toast("Moved to %s" % definition.display_name)
+	_show_toast(tr("TOAST_MOVED_ENVIRONMENT") % _localized_content_name(definition))
 	_save_game()
 	_refresh_stall()
 
@@ -401,9 +401,9 @@ func _advance_to_now(excluded_position_instance_ids: Array[String] = []) -> bool
 	_update_hud()
 	var discovery_name := _get_new_discovery_name(previous_discoveries)
 	if not discovery_name.is_empty():
-		_show_toast("New discovery: %s" % discovery_name)
+		_show_toast(tr("TOAST_NEW_DISCOVERY") % discovery_name)
 	elif game_state.plants.size() > previous_count:
-		_show_toast("A new young blob appeared")
+		_show_toast(tr("TOAST_NEW_PLANT"))
 	if stall_panel.visible and _get_stall_state_signature() != _stall_presented_signature:
 		_stall_state_changed_during_last_advance = true
 		_refresh_stall()
@@ -481,10 +481,7 @@ func _save_game() -> void:
 	var error := LocalSave.save_state(game_state, save_path, tuning)
 	if error != OK:
 		_saving_enabled = false
-		var message := (
-			"Jar Garden could not safely save progress (error %d). Existing save data "
-			+ "was preserved where possible, and this session is now locked."
-		) % error
+		var message := tr("SAVE_WRITE_FAILED") % error
 		push_error(message)
 		_show_save_error(message)
 
@@ -548,6 +545,7 @@ func _reconcile_content_state() -> void:
 		and not game_state.owns_environment(active_environment.id)
 	):
 		game_state.owned_environment_ids.append(active_environment.id)
+	game_state.ensure_minimum_recovery(tuning, game_state.last_simulated_unix_seconds)
 
 
 func _get_first_jar_definition() -> JarDefinition:
@@ -569,7 +567,7 @@ func _get_new_discovery_name(previous_discoveries: Array) -> String:
 		if variant_id in previous_discoveries:
 			continue
 		var definition := content_catalog.get_variant(variant_id)
-		return definition.display_name if definition != null else String(variant_id)
+		return _localized_content_name(definition) if definition != null else String(variant_id)
 	return ""
 
 
@@ -611,13 +609,24 @@ func _update_hud() -> void:
 	var jar_definition := _get_active_jar_definition()
 	var environment_definition := _get_active_environment_definition()
 	var capacity := jar_definition.capacity if jar_definition != null else 12
-	coins_label.text = "Coins %d" % game_state.coins
-	water_label.text = GardenSimulator.get_water_state_label(game_state, tuning)
-	capacity_label.text = "%d/%d" % [game_state.plants.size(), capacity]
-	water_level_visual.anchor_top = 1.0 - game_state.water_level
-	water_level_visual.offset_top = 0.0
+	coins_label.text = tr("UI_HUD_COINS") % game_state.coins
+	var water_state_key := "WATER_%s" % GardenSimulator.get_water_state_label(
+		game_state,
+		tuning,
+	).to_upper().replace(" ", "_")
+	water_label.text = tr(water_state_key)
+	capacity_label.text = tr("UI_HUD_CAPACITY") % [game_state.plants.size(), capacity]
+	water_effects.set_level(game_state.water_level)
 
-	var weather_label := environment_definition.local_weather_label if environment_definition != null else "Calm"
+	var weather_label := (
+		_localized_resource_key(
+			environment_definition,
+			&"weather_label_key",
+			environment_definition.local_weather_label,
+		)
+		if environment_definition != null
+		else tr("ENV_FOREST_WEATHER")
+	)
 	var environment_snapshot := EnvironmentProvider.get_environment_with_timezone_bias(
 		int(Time.get_unix_time_from_system()),
 		weather_label,
@@ -625,31 +634,30 @@ func _update_hud() -> void:
 		tuning.day_end_hour,
 		game_state.simulation_timezone_bias_minutes,
 	)
-	light_label.text = environment_snapshot.display_label
+	var light_key := (
+		"LIGHT_DAY"
+		if environment_snapshot.light_state == EnvironmentProvider.DAY
+		else "LIGHT_NIGHT"
+	)
+	light_label.text = "%s • %s" % [tr(light_key), weather_label]
 	if environment_snapshot.light_state == EnvironmentProvider.DAY:
 		sun_moon.self_modulate = Color(1.0, 0.94, 0.65, 1.0)
+		night_tint.color = Color(0.098, 0.145, 0.282, 0.0)
 	else:
 		sun_moon.self_modulate = Color(0.58, 0.68, 0.92, 1.0)
+		night_tint.color = Color(0.098, 0.145, 0.282, 0.22)
 
 
 func _apply_content_presentation() -> void:
 	var environment_definition := _get_active_environment_definition()
 	if environment_definition != null:
 		sky.color = environment_definition.sky_color
-		ground.color = environment_definition.ground_color
-		mist.color = Color(environment_definition.accent_color, 0.2)
-		var show_forest_shapes := environment_definition.visual_style != &"indoor"
-		distant_foliage.visible = show_forest_shapes
-		left_tree.visible = show_forest_shapes
-		right_tree.visible = show_forest_shapes
+		mist.color = Color(environment_definition.accent_color, 0.08)
+		background_far.texture = environment_definition.get("far_texture") as Texture2D
+		background_mid.texture = environment_definition.get("mid_texture") as Texture2D
+		background_front.texture = environment_definition.get("front_texture") as Texture2D
 		indoor_window.visible = environment_definition.visual_style == &"indoor"
 		rainforest_vines.visible = environment_definition.visual_style == &"rainforest"
-		left_tree.color = environment_definition.accent_color.darkened(0.48)
-		right_tree.color = environment_definition.accent_color.darkened(0.48)
-		for foliage_panel in [canopy_top, crown_left, crown_right]:
-			var foliage_style := foliage_panel.get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-			foliage_style.bg_color = environment_definition.accent_color
-			foliage_panel.add_theme_stylebox_override("panel", foliage_style)
 
 	var jar_definition := _get_active_jar_definition()
 	if jar_definition != null:
@@ -667,12 +675,12 @@ func _show_toast(message: String) -> void:
 	if _toast_tween != null and _toast_tween.is_valid():
 		_toast_tween.kill()
 	toast_label.text = message
-	toast_label.modulate.a = 1.0
-	toast_label.show()
+	toast_panel.modulate.a = 1.0
+	toast_panel.show()
 	_toast_tween = create_tween()
 	_toast_tween.tween_interval(1.4)
-	_toast_tween.tween_property(toast_label, "modulate:a", 0.0, 0.45)
-	_toast_tween.tween_callback(toast_label.hide)
+	_toast_tween.tween_property(toast_panel, "modulate:a", 0.0, 0.45)
+	_toast_tween.tween_callback(toast_panel.hide)
 
 
 func _show_save_error(message: String) -> void:
@@ -701,41 +709,24 @@ func _on_save_error_close_pressed() -> void:
 	get_tree().quit()
 
 
-func _apply_safe_area() -> void:
-	var margins := Vector4(
-		BASE_MARGIN_LEFT,
-		BASE_MARGIN_TOP,
-		BASE_MARGIN_RIGHT,
-		BASE_MARGIN_BOTTOM,
+func _localized_content_name(definition: Resource) -> String:
+	if definition == null:
+		return ""
+	return _localized_resource_key(
+		definition,
+		&"display_name_key",
+		str(definition.get("display_name")),
 	)
 
-	if OS.get_name() in MOBILE_PLATFORMS:
-		margins += _get_mobile_safe_insets()
 
-	safe_area.add_theme_constant_override("margin_left", int(round(margins.x)))
-	safe_area.add_theme_constant_override("margin_top", int(round(margins.y)))
-	safe_area.add_theme_constant_override("margin_right", int(round(margins.z)))
-	safe_area.add_theme_constant_override("margin_bottom", int(round(margins.w)))
-
-
-func _get_mobile_safe_insets() -> Vector4:
-	var window_size_pixels: Vector2i = DisplayServer.window_get_size()
-	if window_size_pixels.x <= 0 or window_size_pixels.y <= 0:
-		return Vector4.ZERO
-
-	var safe_rect_pixels: Rect2i = DisplayServer.get_display_safe_area()
-	var window_position_pixels: Vector2i = DisplayServer.window_get_position()
-	var safe_start: Vector2i = safe_rect_pixels.position - window_position_pixels
-	var safe_end: Vector2i = safe_rect_pixels.end - window_position_pixels
-	var viewport_size: Vector2 = get_viewport_rect().size
-	var pixel_to_viewport := Vector2(
-		viewport_size.x / float(window_size_pixels.x),
-		viewport_size.y / float(window_size_pixels.y),
-	)
-
-	return Vector4(
-		maxf(float(safe_start.x), 0.0) * pixel_to_viewport.x,
-		maxf(float(safe_start.y), 0.0) * pixel_to_viewport.y,
-		maxf(float(window_size_pixels.x - safe_end.x), 0.0) * pixel_to_viewport.x,
-		maxf(float(window_size_pixels.y - safe_end.y), 0.0) * pixel_to_viewport.y,
-	)
+func _localized_resource_key(
+	definition: Resource,
+	property_name: StringName,
+	fallback: String,
+) -> String:
+	if definition == null:
+		return fallback
+	var raw_key: Variant = definition.get(property_name)
+	if raw_key != null and not str(raw_key).is_empty():
+		return tr(str(raw_key))
+	return fallback

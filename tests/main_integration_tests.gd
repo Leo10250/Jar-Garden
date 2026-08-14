@@ -12,7 +12,7 @@ func _init() -> void:
 
 
 func _run_tests() -> void:
-	_test_save_path = "user://main_integration_%d.json" % Time.get_ticks_usec()
+	_test_save_path = TestTempPaths.make_path("main_integration")
 	var main := _instantiate_main()
 	await process_frame
 	await process_frame
@@ -79,7 +79,7 @@ func _run_tests() -> void:
 	var stall_panel := main.get_node("StallPanel") as StallPanel
 	_expect(stall_panel.visible, "The visible Stall button opens the collection/economy overlay.")
 	await process_frame
-	var collection_rows := stall_panel.get_node("SafeMargin/Modal/ContentMargin/Layout/Tabs/Collection/CollectionRows") as VBoxContainer
+	var collection_rows := stall_panel.get_node("SafeMargin/Modal/ContentMargin/Layout/Tabs/Collection/CollectionRows") as GridContainer
 	_expect(collection_rows.get_child_count() == catalog.plant_variants.size(), "The collection shows one entry for every configured variant.")
 	_expect(_tree_contains_label_text(collection_rows, "Unknown Variant"), "Undiscovered collection entries use a mystery presentation.")
 	stall_panel.hide()
@@ -108,6 +108,8 @@ func _run_tests() -> void:
 	await _test_invalid_save_blocks_unsaved_play()
 	await _test_incomplete_catch_up_locks_positions()
 	await _test_stall_requotes_before_sale()
+	await _test_recovery_sales_through_main()
+	await _test_full_jar_survives_water_animation()
 	_cleanup_test_save()
 	for cleanup_frame in 4:
 		await process_frame
@@ -134,7 +136,7 @@ func _instantiate_main(
 
 
 func _test_missing_content_reconciliation() -> void:
-	var save_path := "user://missing_content_%d.json" % Time.get_ticks_usec()
+	var save_path := TestTempPaths.make_path("missing_content")
 	var tuning := MvpTuning.new()
 	var state := GameState.create_new(1000, tuning, 0)
 	state.active_jar_id = &"retired_jar"
@@ -165,7 +167,7 @@ func _test_missing_content_reconciliation() -> void:
 
 
 func _test_invalid_save_blocks_unsaved_play() -> void:
-	var save_path := "user://invalid_main_%d.json" % Time.get_ticks_usec()
+	var save_path := TestTempPaths.make_path("invalid_main")
 	var malformed_text := "{preserve-this-invalid-save"
 	var file := FileAccess.open(save_path, FileAccess.WRITE)
 	if file == null:
@@ -199,7 +201,7 @@ func _test_invalid_save_blocks_unsaved_play() -> void:
 
 
 func _test_incomplete_catch_up_locks_positions() -> void:
-	var save_path := "user://catch_up_main_%d.json" % Time.get_ticks_usec()
+	var save_path := TestTempPaths.make_path("catch_up_main")
 	var tuning := MvpTuning.new()
 	tuning.young_duration_seconds = 100000.0
 	tuning.spawn_interval_min_seconds = 1.0
@@ -241,7 +243,7 @@ func _test_incomplete_catch_up_locks_positions() -> void:
 
 
 func _test_stall_requotes_before_sale() -> void:
-	var save_path := "user://stall_requote_%d.json" % Time.get_ticks_usec()
+	var save_path := TestTempPaths.make_path("stall_requote")
 	var main := _instantiate_main(save_path)
 	await process_frame
 	await process_frame
@@ -268,6 +270,123 @@ func _test_stall_requotes_before_sale() -> void:
 	_expect(_tree_contains_label_fragment(sell_rows, "Old"), "The open Stall refreshes the plant's new lifecycle stage.")
 	_expect(_tree_contains_button_text(sell_rows, "Sell • 1"), "The refreshed Stall shows the matching Old sale value.")
 	stall_panel.close_panel()
+	main.queue_free()
+	await process_frame
+	await process_frame
+	_remove_save_files(save_path)
+
+
+func _test_recovery_sales_through_main() -> void:
+	var save_path := TestTempPaths.make_path("recovery_sale_main")
+	var main := _instantiate_main(save_path)
+	await process_frame
+	await process_frame
+	var state: GameState = main.get("game_state")
+	var tuning: MvpTuning = main.get("tuning")
+	state.plants.clear()
+	state.reproduction_pair_progress.clear()
+	var now := int(Time.get_unix_time_from_system())
+	state.last_simulated_unix_seconds = now
+	state.next_spawn_unix_seconds = now + 100000
+	var recovery_ids: Array[String] = []
+	for center in [Vector2(0.30, 0.72), Vector2(0.50, 0.58), Vector2(0.70, 0.72)]:
+		var recovery := state.spawn_plant_with_context(
+			PlantState.BASE_VARIANT_ID,
+			center,
+			now,
+			tuning,
+			PlantState.SOURCE_RECOVERY,
+		)
+		recovery_ids.append(recovery.instance_id)
+	state.coins = 37
+	main.call("_sync_plant_views")
+	await process_frame
+
+	var coins_before_sale := state.coins
+	main.call("_on_sell_plant_requested", recovery_ids[0])
+	_expect(
+		state.find_plant(recovery_ids[0]) == null,
+		"A recovery plant is sellable through Main while more than two plants remain.",
+	)
+	_expect(
+		state.coins == coins_before_sale,
+		"Selling a non-anchor recovery plant through Main never awards coins.",
+	)
+	_expect(state.plants.size() == 2, "Selling the third recovery plant leaves the viable anchor pair.")
+
+	for anchor_id in recovery_ids.slice(1):
+		main.call("_on_sell_plant_requested", anchor_id)
+		_expect(
+			state.find_plant(anchor_id) != null,
+			"Each plant in the final recovery pair is protected by Main's sale handler.",
+		)
+	_expect(state.plants.size() == 2, "Neither of the final two ecology anchors can be sold.")
+	_expect(state.coins == coins_before_sale, "Blocked anchor sales do not change the coin balance.")
+
+	main.queue_free()
+	await process_frame
+	await process_frame
+	_remove_save_files(save_path)
+
+
+func _test_full_jar_survives_water_animation() -> void:
+	var save_path := TestTempPaths.make_path("full_jar_water_main")
+	var prototype := load("res://resources/prototype_mvp_tuning.tres") as MvpTuning
+	var tuning := prototype.duplicate(true) as MvpTuning
+	tuning.foreground_tick_seconds = 0.05
+	tuning.spawn_base_success_chance = 0.0
+	var main := _instantiate_main(save_path, tuning)
+	await process_frame
+	await process_frame
+	var state: GameState = main.get("game_state")
+	var now := int(Time.get_unix_time_from_system())
+	state.next_spawn_unix_seconds = now + 100000
+	while state.plants.size() < 12:
+		var index := state.plants.size()
+		var column := index % 4
+		var row := index / 4
+		state.add_plant(
+			PlantState.BASE_VARIANT_ID,
+			Vector2(0.18 + float(column) * 0.21, 0.34 + float(row) * 0.22),
+			now,
+			tuning,
+		)
+	main.call("_sync_plant_views")
+	await process_frame
+	_expect(state.plants.size() == 12, "The full-jar fixture contains exactly twelve plants.")
+	_expect(_count_plant_views(main) == 12, "Synchronizing a full jar creates all twelve PlantViews.")
+
+	var loop_probe := {"ticks": 0}
+	var simulation_timer := main.get_node("SimulationTimer") as Timer
+	simulation_timer.timeout.connect(func() -> void:
+		loop_probe["ticks"] = int(loop_probe.ticks) + 1
+	)
+	simulation_timer.start(tuning.foreground_tick_seconds)
+	var water_effects := main.get_node(
+		"SafeArea/GameArea/JarSlot/Jar/PlantBounds/WaterEffects"
+	) as WaterEffects
+	var visual_level_before := water_effects.get_visual_level()
+	main.call("_on_water_button_pressed")
+	_expect(water_effects.is_level_animating(), "Watering a full jar starts the visible water-level tween.")
+	await create_timer(0.20).timeout
+
+	_expect(int(loop_probe.ticks) > 0, "The main simulation timer continues advancing during water animation.")
+	simulation_timer.stop()
+	await create_timer(0.55).timeout
+	_expect(
+		water_effects.get_visual_level() > visual_level_before,
+		"The water visual advances instead of remaining a color-only state change.",
+	)
+	_expect(
+		is_equal_approx(
+			water_effects.get_visual_level(),
+			water_effects.get_target_level(),
+		),
+		"The short run allows the visible water-level tween to reach its target.",
+	)
+	_expect(state.plants.size() == 12, "Watering and short simulation do not remove full-jar plant state.")
+	_expect(_count_plant_views(main) == 12, "All twelve PlantViews remain after the water tween and main-loop ticks.")
+
 	main.queue_free()
 	await process_frame
 	await process_frame

@@ -9,20 +9,43 @@ signal sell_plant_requested(instance_id: String)
 signal jar_action_requested(jar_id: StringName)
 signal environment_action_requested(environment_id: StringName)
 
+enum PrimarySection {
+	COLLECTION,
+	MARKET,
+	CUSTOMIZE,
+}
 
-const BASE_SAFE_MARGIN: int = 20
-const MOBILE_PLATFORMS: PackedStringArray = ["Android", "iOS"]
-const ROW_COLOR: Color = Color(0.15, 0.255, 0.20, 0.96)
-const ACTION_COLOR: Color = Color(0.46, 0.68, 0.48, 1.0)
-const SECONDARY_ACTION_COLOR: Color = Color(0.55, 0.63, 0.43, 1.0)
+enum StallPage {
+	COLLECTION,
+	BUY,
+	SELL,
+	JARS,
+	PLACES,
+}
+
+const COLLECTION_TWO_COLUMN_BREAKPOINT: float = 560.0
 
 @export var plant_scene: PackedScene
+@export var item_card_scene: PackedScene
 
-@onready var safe_margin: MarginContainer = $SafeMargin
 @onready var close_button: Button = %CloseButton
 @onready var summary_label: Label = %Summary
+@onready var header_row: HBoxContainer = %HeaderRow
+@onready var summary_badge: PanelContainer = %SummaryBadge
+@onready var compact_summary_slot: CenterContainer = %CompactSummarySlot
+@onready var collection_button: Button = %CollectionButton
+@onready var market_button: Button = %MarketButton
+@onready var customize_button: Button = %CustomizeButton
+@onready var secondary_navigation: PanelContainer = %SecondaryNavigation
+@onready var market_segments: HBoxContainer = %MarketSegments
+@onready var customize_segments: HBoxContainer = %CustomizeSegments
+@onready var buy_button: Button = %BuyButton
+@onready var sell_button: Button = %SellButton
+@onready var jars_button: Button = %JarsButton
+@onready var places_button: Button = %PlacesButton
 @onready var tabs: TabContainer = %Tabs
-@onready var collection_rows: VBoxContainer = %CollectionRows
+@onready var collection_scroll: ScrollContainer = %Collection
+@onready var collection_rows: GridContainer = %CollectionRows
 @onready var buy_rows: VBoxContainer = %BuyRows
 @onready var sell_rows: VBoxContainer = %SellRows
 @onready var jar_rows: VBoxContainer = %JarRows
@@ -33,18 +56,27 @@ var _catalog: ContentCatalog
 var _tuning: MvpTuning
 var _active_capacity: int = 0
 var _rebuild_queued: bool = false
+var _primary_section: PrimarySection = PrimarySection.COLLECTION
+var _market_page: StallPage = StallPage.BUY
+var _customize_page: StallPage = StallPage.JARS
+var _is_compact_header: bool = false
 
 
 func _ready() -> void:
 	close_button.pressed.connect(_request_close)
+	collection_button.pressed.connect(_show_collection)
+	market_button.pressed.connect(_show_market)
+	customize_button.pressed.connect(_show_customize)
+	buy_button.pressed.connect(_show_buy)
+	sell_button.pressed.connect(_show_sell)
+	jars_button.pressed.connect(_show_jars)
+	places_button.pressed.connect(_show_places)
 	visibility_changed.connect(_on_visibility_changed)
-	get_viewport().size_changed.connect(_apply_safe_area)
-	tabs.set_tab_title(0, "Collection")
-	tabs.set_tab_title(1, "Buy")
-	tabs.set_tab_title(2, "Sell")
-	tabs.set_tab_title(3, "Jars")
-	tabs.set_tab_title(4, "Places")
-	_apply_safe_area()
+	resized.connect(_queue_responsive_layout)
+	collection_scroll.resized.connect(_queue_responsive_layout)
+	tabs.tabs_visible = false
+	_apply_navigation_state()
+	_queue_responsive_layout()
 	if _state != null and _catalog != null and _tuning != null:
 		_queue_rebuild()
 
@@ -66,6 +98,7 @@ func _input(event: InputEvent) -> void:
 func open_panel() -> void:
 	show()
 	if is_node_ready():
+		_queue_responsive_layout()
 		call_deferred("_focus_close_button")
 
 
@@ -96,7 +129,67 @@ func _request_close() -> void:
 
 func _on_visibility_changed() -> void:
 	if visible and is_node_ready():
+		_queue_responsive_layout()
 		call_deferred("_focus_close_button")
+
+
+func _show_collection() -> void:
+	_primary_section = PrimarySection.COLLECTION
+	_apply_navigation_state()
+
+
+func _show_market() -> void:
+	_primary_section = PrimarySection.MARKET
+	_apply_navigation_state()
+
+
+func _show_customize() -> void:
+	_primary_section = PrimarySection.CUSTOMIZE
+	_apply_navigation_state()
+
+
+func _show_buy() -> void:
+	_market_page = StallPage.BUY
+	_apply_navigation_state()
+
+
+func _show_sell() -> void:
+	_market_page = StallPage.SELL
+	_apply_navigation_state()
+
+
+func _show_jars() -> void:
+	_customize_page = StallPage.JARS
+	_apply_navigation_state()
+
+
+func _show_places() -> void:
+	_customize_page = StallPage.PLACES
+	_apply_navigation_state()
+
+
+func _apply_navigation_state() -> void:
+	if not is_node_ready():
+		return
+	collection_button.button_pressed = _primary_section == PrimarySection.COLLECTION
+	market_button.button_pressed = _primary_section == PrimarySection.MARKET
+	customize_button.button_pressed = _primary_section == PrimarySection.CUSTOMIZE
+	buy_button.button_pressed = _market_page == StallPage.BUY
+	sell_button.button_pressed = _market_page == StallPage.SELL
+	jars_button.button_pressed = _customize_page == StallPage.JARS
+	places_button.button_pressed = _customize_page == StallPage.PLACES
+
+	secondary_navigation.visible = _primary_section != PrimarySection.COLLECTION
+	market_segments.visible = _primary_section == PrimarySection.MARKET
+	customize_segments.visible = _primary_section == PrimarySection.CUSTOMIZE
+	match _primary_section:
+		PrimarySection.COLLECTION:
+			tabs.current_tab = StallPage.COLLECTION
+		PrimarySection.MARKET:
+			tabs.current_tab = _market_page
+		PrimarySection.CUSTOMIZE:
+			tabs.current_tab = _customize_page
+	_queue_responsive_layout()
 
 
 func _queue_rebuild() -> void:
@@ -111,6 +204,7 @@ func _perform_queued_rebuild() -> void:
 	if not is_node_ready():
 		return
 	_rebuild_all_rows()
+	_update_responsive_layout()
 	refresh_applied.emit()
 
 
@@ -122,8 +216,8 @@ func _rebuild_all_rows() -> void:
 	_clear_rows(environment_rows)
 
 	if _state == null or _catalog == null or _tuning == null:
-		summary_label.text = "Stall data unavailable"
-		_add_empty_message(collection_rows, "The garden stall is not ready yet.")
+		summary_label.text = tr("UI_STALL_UNAVAILABLE")
+		_add_empty_message(collection_rows, tr("UI_STALL_NOT_READY"))
 		_restore_modal_focus_after_rebuild()
 		return
 
@@ -137,16 +231,23 @@ func _rebuild_all_rows() -> void:
 
 
 func _refresh_summary() -> void:
-	summary_label.text = "%d coins  •  %d / %d plants" % [
-		_state.coins,
-		_state.plants.size(),
-		_active_capacity,
-	]
+	if _is_compact_header:
+		summary_label.text = tr("UI_SUMMARY_COMPACT") % [
+			_state.coins,
+			_state.plants.size(),
+			_active_capacity,
+		]
+	else:
+		summary_label.text = tr("UI_SUMMARY_WIDE") % [
+			_state.coins,
+			_state.plants.size(),
+			_active_capacity,
+		]
 
 
 func _build_collection_rows() -> void:
 	if _catalog.plant_variants.is_empty():
-		_add_empty_message(collection_rows, "No plant variants are configured.")
+		_add_empty_message(collection_rows, tr("UI_NO_VARIANTS"))
 		return
 
 	for definition in _catalog.plant_variants:
@@ -154,18 +255,35 @@ func _build_collection_rows() -> void:
 			continue
 		var discovered: bool = definition.id in _state.discovered_variant_ids
 		if discovered:
-			_add_row(
+			_add_card(
 				collection_rows,
 				_make_plant_preview(definition),
-				definition.display_name,
-				"%s • %s" % [_format_id(definition.rarity), definition.description],
+				_localized_content_name(definition),
+				tr("UI_COLLECTION_DISCOVERED_DETAILS") % [
+					_localized_rarity(definition.rarity),
+					_localized_content_description(definition),
+					_localized_resource_key(definition, &"discovered_recipe_key", ""),
+				],
+				"",
+				false,
+				Callable(),
+				true,
 			)
 		else:
-			_add_row(
+			var poetic_hint := _localized_resource_key(
+				definition,
+				&"undiscovered_hint_key",
+				tr("PLANT_BASE_COMMON_HINT"),
+			)
+			_add_card(
 				collection_rows,
 				_make_mystery_preview(),
-				"Unknown Variant",
-				"Undiscovered • Keep caring for your jar to reveal this plant.",
+				tr("UI_UNKNOWN_VARIANT"),
+				tr("UI_COLLECTION_UNKNOWN_DETAILS") % poetic_hint,
+				"",
+				false,
+				Callable(),
+				true,
 			)
 
 
@@ -178,65 +296,72 @@ func _build_buy_rows() -> void:
 		shown_count += 1
 		var can_afford: bool = _state.coins >= definition.young_buy_price
 		var disabled: bool = jar_is_full or not can_afford
-		var action_text: String = "Buy • %d" % definition.young_buy_price
+		var action_text: String = tr("UI_BUY_PRICE") % definition.young_buy_price
 		if jar_is_full:
-			action_text = "Jar full"
+			action_text = tr("UI_JAR_FULL")
 		elif not can_afford:
-			action_text = "Need %d" % definition.young_buy_price
-		_add_row(
+			action_text = tr("UI_NEED_COINS") % definition.young_buy_price
+		_add_card(
 			buy_rows,
 			_make_plant_preview(definition),
-			definition.display_name,
-			"Young plant • %s • Previously discovered" % _format_id(definition.rarity),
+			_localized_content_name(definition),
+			tr("UI_YOUNG_DISCOVERED") % _localized_rarity(definition.rarity),
 			action_text,
 			disabled,
 			_emit_buy_plant.bind(definition.id),
 		)
 
 	if shown_count == 0:
-		_add_empty_message(buy_rows, "Discover a plant variant before buying its young form.")
+		_add_empty_message(buy_rows, tr("UI_NO_BUYABLE_PLANTS"))
 
 
 func _build_sell_rows() -> void:
 	if _state.plants.is_empty():
-		_add_empty_message(sell_rows, "There are no plants in the jar to sell.")
+		_add_empty_message(sell_rows, tr("UI_NO_SELLABLE_PLANTS"))
 		return
 
 	for plant in _state.plants:
 		var definition: PlantVariantDefinition = _catalog.get_variant(plant.variant_id)
 		var stage: PlantState.LifecycleStage = plant.get_lifecycle_stage(_tuning)
-		var stage_name: String = plant.get_lifecycle_stage_name(_tuning)
+		var stage_name: String = _localized_stage(plant.get_lifecycle_stage_name(_tuning))
 		var sell_value: int = 1
 		if stage == PlantState.LifecycleStage.ADULT and definition != null:
 			sell_value = definition.adult_sell_value
+		if plant.birth_source == PlantState.SOURCE_RECOVERY:
+			sell_value = 0
+		var is_anchor := _state.is_ecology_anchor(plant)
+		var can_sell := _state.can_sell_plant(plant)
 
 		var title := String(plant.variant_id)
 		var subtitle := "%s • %s" % [stage_name, plant.instance_id]
 		var preview: Control
-		var disabled: bool = false
-		var action_text: String = "Sell • %d" % sell_value
+		var action_text: String = (
+			tr("UI_ECOLOGY_ANCHOR") if is_anchor else tr("UI_SELL_PRICE") % sell_value
+		)
 		if definition != null:
-			title = definition.display_name
+			title = _localized_content_name(definition)
 			preview = _make_plant_preview(definition)
 		else:
 			preview = _make_mystery_preview()
-			subtitle = "%s • Missing variant data" % stage_name
-			action_text = "Sell • 1"
+			subtitle = tr("UI_MISSING_VARIANT") % stage_name
+			action_text = tr("UI_SELL_PRICE") % sell_value
+		if is_anchor:
+			subtitle = "%s • %s" % [stage_name, tr("UI_ECOLOGY_ANCHOR")]
 
-		_add_row(
+		_add_card(
 			sell_rows,
 			preview,
 			title,
 			subtitle,
 			action_text,
-			disabled,
+			not can_sell,
 			_emit_sell_plant.bind(plant.instance_id),
 		)
 
 
 func _build_jar_rows() -> void:
 	if _catalog.jars.is_empty():
-		_add_empty_message(jar_rows, "No jars are configured.")
+		_add_empty_message(jar_rows, tr("UI_NO_JARS"))
 		return
 
 	for definition in _catalog.jars:
@@ -245,21 +370,24 @@ func _build_jar_rows() -> void:
 		var is_active: bool = definition.id == _state.active_jar_id
 		var is_owned: bool = _state.owns_jar(definition.id)
 		var disabled: bool = is_active
-		var action_text: String = ""
+		var action_text: String
 		if is_active:
-			action_text = "Active"
+			action_text = tr("UI_ACTIVE")
 		elif is_owned:
-			action_text = "Owned • Use"
+			action_text = tr("UI_OWNED_USE")
 		else:
-			action_text = "Buy • %d" % definition.price
+			action_text = tr("UI_BUY_PRICE") % definition.price
 		if not is_owned and _state.coins < definition.price:
 			disabled = true
-			action_text = "Need %d" % definition.price
-		_add_row(
+			action_text = tr("UI_NEED_COINS") % definition.price
+		_add_card(
 			jar_rows,
-			_make_swatch_preview(definition.glass_fill_color, "Jar"),
-			definition.display_name,
-			"Capacity %d • %s" % [definition.capacity, definition.description],
+			_make_swatch_preview(definition.glass_fill_color, tr("UI_PREVIEW_JAR")),
+			_localized_content_name(definition),
+			tr("UI_CAPACITY_DESCRIPTION") % [
+				definition.capacity,
+				_localized_content_description(definition),
+			],
 			action_text,
 			disabled,
 			_emit_jar_action.bind(definition.id),
@@ -268,7 +396,7 @@ func _build_jar_rows() -> void:
 
 func _build_environment_rows() -> void:
 	if _catalog.environments.is_empty():
-		_add_empty_message(environment_rows, "No environments are configured.")
+		_add_empty_message(environment_rows, tr("UI_NO_ENVIRONMENTS"))
 		return
 
 	for definition in _catalog.environments:
@@ -277,99 +405,79 @@ func _build_environment_rows() -> void:
 		var is_active: bool = definition.id == _state.active_environment_id
 		var is_owned: bool = _state.owns_environment(definition.id)
 		var disabled: bool = is_active
-		var action_text: String = ""
+		var action_text: String
 		if is_active:
-			action_text = "Active"
+			action_text = tr("UI_ACTIVE")
 		elif is_owned:
-			action_text = "Owned • Use"
+			action_text = tr("UI_OWNED_USE")
 		else:
-			action_text = "Buy • %d" % definition.price
+			action_text = tr("UI_BUY_PRICE") % definition.price
 		if not is_owned and _state.coins < definition.price:
 			disabled = true
-			action_text = "Need %d" % definition.price
-		_add_row(
+			action_text = tr("UI_NEED_COINS") % definition.price
+		var preview := _make_swatch_preview(
+			definition.accent_color,
+			tr("UI_PREVIEW_PLACE"),
+		)
+		var thumbnail: Texture2D = definition.get("thumbnail_texture") as Texture2D
+		if thumbnail != null:
+			preview.queue_free()
+			preview = _make_texture_preview(thumbnail)
+		_add_card(
 			environment_rows,
-			_make_swatch_preview(definition.accent_color, "Env"),
-			definition.display_name,
-			"%s • %s" % [definition.local_weather_label, definition.description],
+			preview,
+			_localized_content_name(definition),
+			tr("UI_ENVIRONMENT_DESCRIPTION") % [
+				_localized_resource_key(
+					definition,
+					&"weather_label_key",
+					definition.local_weather_label,
+				),
+				_localized_content_description(definition),
+			],
 			action_text,
 			disabled,
 			_emit_environment_action.bind(definition.id),
 		)
 
 
-func _add_row(
-	container: VBoxContainer,
+func _add_card(
+	container: Container,
 	preview: Control,
 	title: String,
 	subtitle: String,
 	action_text: String = "",
 	action_disabled: bool = false,
 	action: Callable = Callable(),
+	collection_mode: bool = false,
 ) -> void:
-	var row := PanelContainer.new()
-	row.custom_minimum_size = Vector2(0.0, 112.0)
-	row.mouse_filter = Control.MOUSE_FILTER_PASS
-	row.add_theme_stylebox_override(&"panel", _make_row_style())
-	container.add_child(row)
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override(&"margin_left", 14)
-	margin.add_theme_constant_override(&"margin_top", 10)
-	margin.add_theme_constant_override(&"margin_right", 12)
-	margin.add_theme_constant_override(&"margin_bottom", 10)
-	row.add_child(margin)
-
-	var content := HBoxContainer.new()
-	content.add_theme_constant_override(&"separation", 14)
-	margin.add_child(content)
-	content.add_child(preview)
-
-	var text_stack := VBoxContainer.new()
-	text_stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_stack.alignment = BoxContainer.ALIGNMENT_CENTER
-	text_stack.add_theme_constant_override(&"separation", 4)
-	content.add_child(text_stack)
-
-	var title_label := Label.new()
-	title_label.add_theme_color_override(&"font_color", Color(0.95, 0.97, 0.88, 1.0))
-	title_label.add_theme_font_size_override(&"font_size", 22)
-	title_label.text = title
-	text_stack.add_child(title_label)
-
-	var subtitle_label := Label.new()
-	subtitle_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	subtitle_label.add_theme_color_override(&"font_color", Color(0.72, 0.82, 0.72, 1.0))
-	subtitle_label.add_theme_font_size_override(&"font_size", 16)
-	subtitle_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	subtitle_label.text = subtitle
-	text_stack.add_child(subtitle_label)
-
-	if action_text.is_empty():
+	if item_card_scene == null:
+		preview.queue_free()
+		_add_empty_message(container, tr("UI_CARD_UNAVAILABLE"))
 		return
-	var button := Button.new()
-	button.custom_minimum_size = Vector2(142.0, 58.0)
-	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	button.disabled = action_disabled
-	button.text = action_text
-	button.add_theme_font_size_override(&"font_size", 18)
-	button.add_theme_color_override(&"font_color", Color(0.075, 0.15, 0.10, 1.0))
-	button.add_theme_color_override(&"font_disabled_color", Color(0.52, 0.58, 0.51, 1.0))
-	button.add_theme_stylebox_override(&"normal", _make_action_style(ACTION_COLOR))
-	button.add_theme_stylebox_override(&"hover", _make_action_style(SECONDARY_ACTION_COLOR))
-	button.add_theme_stylebox_override(&"pressed", _make_action_style(Color(0.35, 0.52, 0.37, 1.0)))
-	button.add_theme_stylebox_override(&"disabled", _make_action_style(Color(0.22, 0.29, 0.24, 1.0)))
-	if action.is_valid():
-		button.pressed.connect(action)
-	content.add_child(button)
+	var card := item_card_scene.instantiate() as StallItemCard
+	if card == null:
+		preview.queue_free()
+		_add_empty_message(container, tr("UI_CARD_UNAVAILABLE"))
+		return
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	container.add_child(card)
+	card.configure(
+		preview,
+		title,
+		subtitle,
+		action_text,
+		action_disabled,
+		action,
+		collection_mode,
+	)
 
 
-func _add_empty_message(container: VBoxContainer, message: String) -> void:
+func _add_empty_message(container: Container, message: String) -> void:
 	var label := Label.new()
-	label.custom_minimum_size = Vector2(0.0, 96.0)
+	label.custom_minimum_size = Vector2(0.0, 104.0)
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	label.add_theme_color_override(&"font_color", Color(0.76, 0.82, 0.72, 1.0))
-	label.add_theme_font_size_override(&"font_size", 20)
+	label.theme_type_variation = &"StallEmptyLabel"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -378,81 +486,77 @@ func _add_empty_message(container: VBoxContainer, message: String) -> void:
 
 
 func _make_plant_preview(definition: PlantVariantDefinition) -> Control:
-	var host := CenterContainer.new()
-	host.custom_minimum_size = Vector2(108.0, 92.0)
-	host.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if plant_scene == null:
-		host.add_child(_make_blob_panel(definition.body_color, ""))
-		return host
-
+		return _make_swatch_preview(definition.body_color, tr("UI_PREVIEW_PLANT"))
 	var preview_node := plant_scene.instantiate()
 	if not preview_node is Control:
 		preview_node.free()
-		host.add_child(_make_blob_panel(definition.body_color, ""))
-		return host
-
+		return _make_swatch_preview(definition.body_color, tr("UI_PREVIEW_PLANT"))
 	var preview := preview_node as Control
-	host.add_child(preview)
 	if preview.has_method(&"apply_variant_definition"):
 		preview.call(&"apply_variant_definition", definition)
 	if preview.has_method(&"set_interaction_enabled"):
 		preview.call(&"set_interaction_enabled", false)
 	_disable_preview_interaction(preview)
-	return host
+	return preview
 
 
 func _make_mystery_preview() -> Control:
-	var host := CenterContainer.new()
-	host.custom_minimum_size = Vector2(108.0, 92.0)
-	host.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	host.add_child(_make_blob_panel(Color(0.105, 0.125, 0.115, 1.0), "?"))
-	return host
-
-
-func _make_blob_panel(color: Color, mark: String) -> PanelContainer:
-	var blob := PanelContainer.new()
-	blob.custom_minimum_size = Vector2(88.0, 76.0)
-	blob.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := StyleBoxFlat.new()
-	style.bg_color = color
-	style.border_color = Color(0.62, 0.68, 0.62, 0.72)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(38)
-	blob.add_theme_stylebox_override(&"panel", style)
-	if not mark.is_empty():
-		var mark_label := Label.new()
-		mark_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		mark_label.add_theme_color_override(&"font_color", Color(0.76, 0.80, 0.72, 1.0))
-		mark_label.add_theme_font_size_override(&"font_size", 36)
-		mark_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		mark_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		mark_label.text = mark
-		blob.add_child(mark_label)
-	return blob
+	if plant_scene == null:
+		return _make_swatch_preview(Color(0.13, 0.20, 0.17, 1.0), "?")
+	var preview_node := plant_scene.instantiate()
+	if not preview_node is Control:
+		preview_node.free()
+		return _make_swatch_preview(Color(0.13, 0.20, 0.17, 1.0), "?")
+	var preview := preview_node as Control
+	if preview.has_method(&"set_mystery"):
+		preview.call(&"set_mystery", true)
+	if preview.has_method(&"set_interaction_enabled"):
+		preview.call(&"set_interaction_enabled", false)
+	_disable_preview_interaction(preview)
+	return preview
 
 
 func _make_swatch_preview(color: Color, mark: String) -> Control:
 	var host := CenterContainer.new()
 	host.custom_minimum_size = Vector2(108.0, 92.0)
 	host.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var swatch := PanelContainer.new()
-	swatch.custom_minimum_size = Vector2(84.0, 72.0)
+	var frame := PanelContainer.new()
+	frame.custom_minimum_size = Vector2(92.0, 78.0)
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.theme_type_variation = &"PreviewFrame"
+	var swatch := ColorRect.new()
 	swatch.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var style := StyleBoxFlat.new()
-	style.bg_color = color
-	style.border_color = Color(0.86, 0.92, 0.82, 0.75)
-	style.set_border_width_all(3)
-	style.set_corner_radius_all(18)
-	swatch.add_theme_stylebox_override(&"panel", style)
+	swatch.color = color
+	frame.add_child(swatch)
 	var label := Label.new()
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	label.add_theme_color_override(&"font_color", Color(0.96, 0.98, 0.92, 1.0))
-	label.add_theme_font_size_override(&"font_size", 17)
+	label.theme_type_variation = &"PreviewMarkLabel"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.text = mark
 	swatch.add_child(label)
-	host.add_child(swatch)
+	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	host.add_child(frame)
+	return host
+
+
+func _make_texture_preview(texture: Texture2D) -> Control:
+	var host := CenterContainer.new()
+	host.custom_minimum_size = Vector2(108.0, 92.0)
+	host.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var frame := PanelContainer.new()
+	frame.custom_minimum_size = Vector2(92.0, 78.0)
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	frame.theme_type_variation = &"PreviewFrame"
+	var image := TextureRect.new()
+	image.custom_minimum_size = Vector2(86.0, 72.0)
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	image.texture = texture
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	frame.add_child(image)
+	host.add_child(frame)
 	return host
 
 
@@ -469,33 +573,88 @@ func _disable_preview_interaction(node: Node) -> void:
 		_disable_preview_interaction(child)
 
 
-func _make_row_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = ROW_COLOR
-	style.border_color = Color(0.34, 0.49, 0.38, 0.72)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(18)
-	return style
+func _queue_responsive_layout() -> void:
+	if is_node_ready():
+		call_deferred("_update_responsive_layout")
 
 
-func _make_action_style(color: Color) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = color
-	style.set_corner_radius_all(16)
-	style.content_margin_left = 10.0
-	style.content_margin_right = 10.0
-	return style
+func _update_responsive_layout() -> void:
+	if not is_node_ready():
+		return
+	var available_width := collection_scroll.size.x
+	if available_width <= 0.0:
+		available_width = tabs.size.x
+	collection_rows.columns = 2 if available_width >= COLLECTION_TWO_COLUMN_BREAKPOINT else 1
+	_apply_responsive_header(available_width < COLLECTION_TWO_COLUMN_BREAKPOINT)
+
+
+func _apply_responsive_header(compact: bool) -> void:
+	compact_summary_slot.visible = compact
+	var target: Container = compact_summary_slot if compact else header_row
+	if summary_badge.get_parent() != target:
+		summary_badge.reparent(target, false)
+		if not compact:
+			header_row.move_child(summary_badge, close_button.get_index())
+	summary_badge.custom_minimum_size = Vector2(0.0, 52.0) if compact else Vector2(176.0, 64.0)
+	summary_badge.size_flags_horizontal = (
+		Control.SIZE_EXPAND_FILL if compact else Control.SIZE_SHRINK_CENTER
+	)
+	if _is_compact_header == compact:
+		return
+	_is_compact_header = compact
+	if _state != null:
+		_refresh_summary()
 
 
 func _format_id(value: StringName) -> String:
 	return String(value).replace("_", " ").capitalize()
 
 
-func _clear_rows(container: VBoxContainer) -> void:
+func _localized_content_name(definition: Resource) -> String:
+	return _localized_resource_key(
+		definition,
+		&"display_name_key",
+		str(definition.get("display_name")),
+	)
+
+
+func _localized_content_description(definition: Resource) -> String:
+	return _localized_resource_key(
+		definition,
+		&"description_key",
+		str(definition.get("description")),
+	)
+
+
+func _localized_resource_key(
+	definition: Resource,
+	property_name: StringName,
+	fallback: String,
+) -> String:
+	if definition == null:
+		return fallback
+	var raw_key: Variant = definition.get(property_name)
+	if raw_key != null and not str(raw_key).is_empty():
+		return tr(str(raw_key))
+	return fallback
+
+
+func _localized_rarity(rarity: StringName) -> String:
+	var key := "RARITY_%s" % String(rarity).to_upper()
+	var translated := tr(key)
+	return _format_id(rarity) if translated == key else translated
+
+
+func _localized_stage(stage_name: String) -> String:
+	var key := "STAGE_%s" % stage_name.to_upper()
+	var translated := tr(key)
+	return stage_name if translated == key else translated
+
+
+func _clear_rows(container: Container) -> void:
 	for child in container.get_children():
-		# Rebuilds are always frame-deferred, so the originating Button signal has
-		# finished before old rows are released. Immediate freeing also avoids
-		# orphaning queued rows after they have been detached from the scene tree.
+		# Rebuilds are frame-deferred, so an originating Button signal has
+		# completed before its card is released.
 		child.free()
 
 
@@ -560,41 +719,3 @@ func _emit_jar_action(jar_id: StringName) -> void:
 
 func _emit_environment_action(environment_id: StringName) -> void:
 	environment_action_requested.emit(environment_id)
-
-
-func _apply_safe_area() -> void:
-	if not is_node_ready():
-		return
-	var margins := Vector4(
-		BASE_SAFE_MARGIN,
-		BASE_SAFE_MARGIN,
-		BASE_SAFE_MARGIN,
-		BASE_SAFE_MARGIN,
-	)
-	if OS.get_name() in MOBILE_PLATFORMS:
-		margins += _get_mobile_safe_insets()
-	safe_margin.add_theme_constant_override(&"margin_left", roundi(margins.x))
-	safe_margin.add_theme_constant_override(&"margin_top", roundi(margins.y))
-	safe_margin.add_theme_constant_override(&"margin_right", roundi(margins.z))
-	safe_margin.add_theme_constant_override(&"margin_bottom", roundi(margins.w))
-
-
-func _get_mobile_safe_insets() -> Vector4:
-	var window_size_pixels := DisplayServer.window_get_size()
-	if window_size_pixels.x <= 0 or window_size_pixels.y <= 0:
-		return Vector4.ZERO
-	var safe_rect_pixels := DisplayServer.get_display_safe_area()
-	var window_position_pixels := DisplayServer.window_get_position()
-	var safe_start := safe_rect_pixels.position - window_position_pixels
-	var safe_end := safe_rect_pixels.end - window_position_pixels
-	var viewport_size := get_viewport_rect().size
-	var pixel_to_viewport := Vector2(
-		viewport_size.x / float(window_size_pixels.x),
-		viewport_size.y / float(window_size_pixels.y),
-	)
-	return Vector4(
-		maxf(float(safe_start.x), 0.0) * pixel_to_viewport.x,
-		maxf(float(safe_start.y), 0.0) * pixel_to_viewport.y,
-		maxf(float(window_size_pixels.x - safe_end.x), 0.0) * pixel_to_viewport.x,
-		maxf(float(window_size_pixels.y - safe_end.y), 0.0) * pixel_to_viewport.y,
-	)

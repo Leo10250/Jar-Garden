@@ -13,6 +13,9 @@ extends Resource
 @export_range(0.01, 1.0, 0.01) var water_level_per_press: float = 0.22
 @export_range(0.01, 1.0, 0.01) var top_wetness_per_press: float = 0.42
 @export_range(0.0, 1.0, 0.01) var bottom_watering_multiplier: float = 0.25
+@export_range(0.0, 1.0, 0.01) var side_watering_multiplier: float = 0.2
+@export_range(0.0, 1.0, 0.01) var watering_stream_x_normalized: float = 0.5
+@export_range(0.01, 1.0, 0.01) var watering_horizontal_reach: float = 0.5
 @export_range(0.00001, 0.1, 0.00001) var water_evaporation_per_second: float = 0.0025
 @export_range(0.00001, 0.1, 0.00001) var wetness_decay_per_second: float = 0.0018
 @export_range(0.00001, 0.2, 0.00001) var submerged_wetting_per_second: float = 0.015
@@ -29,6 +32,16 @@ extends Resource
 @export_range(0.0, 3.0, 0.05) var day_mutation_multiplier: float = 0.9
 @export_range(0.0, 3.0, 0.05) var night_mutation_multiplier: float = 1.15
 
+@export_group("Environment Mutation Recipes — Prototype")
+@export var mutation_fallback_variant_id: StringName = PlantState.BASE_VARIANT_ID
+@export var mutation_recipes: Array[PlantMutationRecipe] = []
+## Cultivation profiles use settled simulation exposure, not wall-clock guesses.
+@export_range(1.0, 86400.0, 1.0, "or_greater") var mutation_minimum_cultivation_seconds: float = 60.0
+@export_range(0.5, 1.0, 0.01) var mutation_light_dominance_share: float = 0.65
+@export_range(0.0, 1.0, 0.01) var mutation_dry_to_moist_threshold: float = 0.2
+@export_range(0.0, 1.0, 0.01) var mutation_moist_to_wet_threshold: float = 0.5
+@export_range(0.0, 1.0, 0.01) var mutation_submerged_average_threshold: float = 0.5
+
 @export_group("Reproduction — Prototype")
 @export_range(0.01, 1.0, 0.01) var reproduction_contact_distance: float = 0.17
 @export_range(1.0, 86400.0, 1.0) var reproduction_attempt_seconds: float = 20.0
@@ -38,6 +51,9 @@ extends Resource
 @export_range(0.0, 0.25, 0.01) var offspring_position_jitter: float = 0.05
 @export_range(1, 5, 1) var reproduction_limit_min: int = 1
 @export_range(1, 5, 1) var reproduction_limit_max: int = 5
+## Canonical logical size of Main/.../PlantBounds used by offline hitbox SAT.
+## This portrait reference is a prototype/TBD and can be rebalanced with layout.
+@export var reproduction_canonical_plant_bounds_size: Vector2 = Vector2(540.0, 780.0)
 
 @export_group("Automatic Spawning — Prototype")
 @export_range(1.0, 86400.0, 1.0) var spawn_interval_min_seconds: float = 45.0

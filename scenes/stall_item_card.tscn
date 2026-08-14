@@ -1,0 +1,103 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/stall_item_card.gd" id="1_card"]
+
+[node name="StallItemCard" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 126)
+mouse_filter = 1
+theme_type_variation = &"StallCard"
+script = ExtResource("1_card")
+
+[node name="CardMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="CollectionLayout" type="VBoxContainer" parent="CardMargin"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CollectionPreview" type="CenterContainer" parent="CardMargin/CollectionLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 100)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="CollectionTitle" type="Label" parent="CardMargin/CollectionLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StallCardTitle"
+text = "UI_CARD_PLANT"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="CollectionSubtitle" type="Label" parent="CardMargin/CollectionLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"StallCardSubtitle"
+text = "UI_CARD_PLANT_DETAILS"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+max_lines_visible = 3
+
+[node name="ListLayout" type="VBoxContainer" parent="CardMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MainRow" type="HBoxContainer" parent="CardMargin/ListLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="ListPreview" type="CenterContainer" parent="CardMargin/ListLayout/MainRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(108, 96)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Copy" type="VBoxContainer" parent="CardMargin/ListLayout/MainRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="ListTitle" type="Label" parent="CardMargin/ListLayout/MainRow/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StallCardTitle"
+text = "UI_CARD_ITEM"
+text_overrun_behavior = 3
+
+[node name="ListSubtitle" type="Label" parent="CardMargin/ListLayout/MainRow/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"StallCardSubtitle"
+text = "UI_CARD_ITEM_DETAILS"
+autowrap_mode = 2
+max_lines_visible = 3
+
+[node name="WideActionButton" type="Button" parent="CardMargin/ListLayout/MainRow"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(150, 64)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"StallActionButton"
+text = "UI_ACTION"
+
+[node name="CompactActionButton" type="Button" parent="CardMargin/ListLayout"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"StallActionButton"
+text = "UI_ACTION"

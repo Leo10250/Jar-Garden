@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/plant.gd" id="1_plant"]
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_blob"]
+points = PackedVector2Array(-40, 28, -42, 12, -38, -8, -28, -24, -14, -33, 0, -36, 14, -33, 28, -24, 38, -8, 42, 12, 40, 28, 28, 35, -28, 35)
 
 [node name="Plant" type="Control"]
 custom_minimum_size = Vector2(96, 88)
@@ -9,18 +12,46 @@ offset_bottom = 88.0
 mouse_filter = 0
 script = ExtResource("1_plant")
 
-[node name="Visual" type="Node2D" parent="."]
+[node name="Hitbox" type="Area2D" parent="."]
+position = Vector2(48, 44)
+collision_layer = 1
+collision_mask = 1
+monitoring = true
+monitorable = true
+input_pickable = true
 
-[node name="Body" type="Polygon2D" parent="Visual"]
-polygon = PackedVector2Array(8, 72, 6, 56, 10, 36, 20, 20, 34, 11, 48, 8, 62, 11, 76, 20, 86, 36, 90, 56, 88, 72, 76, 79, 20, 79)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("ConvexPolygonShape2D_blob")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+position = Vector2(48, 44)
+
+[node name="IdleMotion" type="Node2D" parent="VisualRoot"]
+
+[node name="ContactMotion" type="Node2D" parent="VisualRoot/IdleMotion"]
+
+[node name="BackTexture" type="Sprite2D" parent="VisualRoot/IdleMotion/ContactMotion"]
+visible = false
+
+[node name="MainTexture" type="Sprite2D" parent="VisualRoot/IdleMotion/ContactMotion"]
+visible = false
+
+[node name="TextureWetness" type="Sprite2D" parent="VisualRoot/IdleMotion/ContactMotion"]
+visible = false
+modulate = Color(0.27, 0.72, 0.92, 0)
+
+[node name="Fallback" type="Node2D" parent="VisualRoot/IdleMotion/ContactMotion"]
+
+[node name="Body" type="Polygon2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
+polygon = PackedVector2Array(-40, 28, -42, 12, -38, -8, -28, -24, -14, -33, 0, -36, 14, -33, 28, -24, 38, -8, 42, 12, 40, 28, 28, 35, -28, 35)
 color = Color(0.985, 0.985, 0.97, 1)
 
-[node name="WetnessOverlay" type="Polygon2D" parent="Visual"]
-polygon = PackedVector2Array(8, 72, 6, 56, 10, 36, 20, 20, 34, 11, 48, 8, 62, 11, 76, 20, 86, 36, 90, 56, 88, 72, 76, 79, 20, 79)
+[node name="WetnessOverlay" type="Polygon2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
+polygon = PackedVector2Array(-40, 28, -42, 12, -38, -8, -28, -24, -14, -33, 0, -36, 14, -33, 28, -24, 38, -8, 42, 12, 40, 28, 28, 35, -28, 35)
 color = Color(0.27, 0.72, 0.92, 0)
 
-[node name="BodyOutline" type="Line2D" parent="Visual"]
-points = PackedVector2Array(8, 72, 6, 56, 10, 36, 20, 20, 34, 11, 48, 8, 62, 11, 76, 20, 86, 36, 90, 56, 88, 72, 76, 79, 20, 79)
+[node name="BodyOutline" type="Line2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
+points = PackedVector2Array(-40, 28, -42, 12, -38, -8, -28, -24, -14, -33, 0, -36, 14, -33, 28, -24, 38, -8, 42, 12, 40, 28, 28, 35, -28, 35)
 width = 3.0
 default_color = Color(0.61, 0.66, 0.64, 1)
 joint_mode = 2
@@ -29,16 +60,16 @@ end_cap_mode = 2
 closed = true
 antialiased = true
 
-[node name="LeftEye" type="Polygon2D" parent="Visual"]
-polygon = PackedVector2Array(31, 43, 33, 40, 37, 39, 40, 41, 41, 45, 40, 49, 37, 51, 33, 50, 31, 47)
+[node name="LeftEye" type="Polygon2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
+polygon = PackedVector2Array(-17, -1, -15, -4, -11, -5, -8, -3, -7, 1, -8, 5, -11, 7, -15, 6, -17, 3)
 color = Color(0.18, 0.22, 0.22, 1)
 
-[node name="RightEye" type="Polygon2D" parent="Visual"]
-polygon = PackedVector2Array(55, 43, 57, 40, 61, 39, 64, 41, 65, 45, 64, 49, 61, 51, 57, 50, 55, 47)
+[node name="RightEye" type="Polygon2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
+polygon = PackedVector2Array(7, -1, 9, -4, 13, -5, 16, -3, 17, 1, 16, 5, 13, 7, 9, 6, 7, 3)
 color = Color(0.18, 0.22, 0.22, 1)
 
-[node name="Mouth" type="Line2D" parent="Visual"]
-points = PackedVector2Array(41, 57, 44, 60, 48, 62, 52, 60, 55, 57)
+[node name="Mouth" type="Line2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
+points = PackedVector2Array(-7, 13, -4, 16, 0, 18, 4, 16, 7, 13)
 width = 3.0
 default_color = Color(0.18, 0.22, 0.22, 1)
 joint_mode = 2
@@ -46,36 +77,39 @@ begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
 
-[node name="LeafCap" type="Polygon2D" parent="Visual"]
+[node name="LeafCap" type="Polygon2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
 visible = false
-polygon = PackedVector2Array(35, 13, 43, 1, 51, 10, 59, 2, 63, 17, 49, 19)
+polygon = PackedVector2Array(-13, -31, -5, -43, 3, -34, 11, -42, 15, -27, 1, -25)
 color = Color(0.28, 0.58, 0.31, 1)
 
-[node name="SunHat" type="Polygon2D" parent="Visual"]
+[node name="SunHat" type="Polygon2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
 visible = false
-polygon = PackedVector2Array(25, 17, 34, 5, 61, 5, 70, 17, 88, 21, 8, 21)
+polygon = PackedVector2Array(-23, -27, -14, -39, 13, -39, 22, -27, 40, -23, -40, -23)
 color = Color(0.91, 0.69, 0.31, 1)
 
-[node name="WateringCan" type="Node2D" parent="Visual"]
+[node name="WateringCan" type="Node2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback"]
 visible = false
 
-[node name="CanBody" type="Polygon2D" parent="Visual/WateringCan"]
-polygon = PackedVector2Array(70, 48, 91, 48, 91, 67, 70, 67)
+[node name="CanBody" type="Polygon2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback/WateringCan"]
+polygon = PackedVector2Array(22, 4, 43, 4, 43, 23, 22, 23)
 color = Color(0.32, 0.58, 0.72, 1)
 
-[node name="CanSpout" type="Line2D" parent="Visual/WateringCan"]
-points = PackedVector2Array(71, 55, 62, 50, 58, 43)
+[node name="CanSpout" type="Line2D" parent="VisualRoot/IdleMotion/ContactMotion/Fallback/WateringCan"]
+points = PackedVector2Array(23, 11, 14, 6, 10, -1)
 width = 5.0
 default_color = Color(0.32, 0.58, 0.72, 1)
 begin_cap_mode = 2
 end_cap_mode = 2
 
-[node name="MysteryMark" type="Label" parent="Visual"]
+[node name="FrontTexture" type="Sprite2D" parent="VisualRoot/IdleMotion/ContactMotion"]
 visible = false
-offset_left = 35.0
-offset_top = 20.0
-offset_right = 62.0
-offset_bottom = 62.0
+
+[node name="MysteryMark" type="Label" parent="VisualRoot/IdleMotion/ContactMotion"]
+visible = false
+offset_left = -13.0
+offset_top = -24.0
+offset_right = 14.0
+offset_bottom = 18.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.8, 0.86, 0.83, 1)
 theme_override_font_sizes/font_size = 34

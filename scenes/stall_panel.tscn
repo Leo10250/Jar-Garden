@@ -2,53 +2,18 @@
 
 [ext_resource type="Script" path="res://scripts/stall_panel.gd" id="1_stall"]
 [ext_resource type="PackedScene" path="res://scenes/plant.tscn" id="2_plant"]
+[ext_resource type="PackedScene" path="res://scenes/stall_item_card.tscn" id="3_card"]
+[ext_resource type="Theme" path="res://resources/ui_theme.tres" id="4_theme"]
+[ext_resource type="Script" path="res://scripts/safe_area_container.gd" id="5_safe"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal"]
-bg_color = Color(0.105, 0.18, 0.145, 0.98)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.56, 0.73, 0.59, 0.9)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-shadow_color = Color(0.02, 0.05, 0.035, 0.55)
-shadow_size = 18
+[sub_resource type="ButtonGroup" id="ButtonGroup_primary"]
+resource_local_to_scene = true
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_header"]
-bg_color = Color(0.18, 0.31, 0.235, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
+[sub_resource type="ButtonGroup" id="ButtonGroup_market"]
+resource_local_to_scene = true
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab"]
-bg_color = Color(0.22, 0.36, 0.28, 1)
-border_width_bottom = 3
-border_color = Color(0.72, 0.82, 0.57, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_unselected"]
-bg_color = Color(0.12, 0.22, 0.17, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close"]
-bg_color = Color(0.78, 0.53, 0.40, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_close_pressed"]
-bg_color = Color(0.60, 0.38, 0.29, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+[sub_resource type="ButtonGroup" id="ButtonGroup_customize"]
+resource_local_to_scene = true
 
 [node name="StallPanel" type="Control"]
 visible = false
@@ -59,8 +24,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
+theme = ExtResource("4_theme")
 script = ExtResource("1_stall")
 plant_scene = ExtResource("2_plant")
+item_card_scene = ExtResource("3_card")
 
 [node name="Scrim" type="ColorRect" parent="."]
 layout_mode = 1
@@ -70,7 +37,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
-color = Color(0.025, 0.055, 0.04, 0.76)
+color = Color(0.043, 0.153, 0.114, 0.8)
 
 [node name="SafeMargin" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -80,22 +47,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 24
+script = ExtResource("5_safe")
+base_margins = Vector4(20, 24, 20, 24)
 
 [node name="Modal" type="PanelContainer" parent="SafeMargin"]
 layout_mode = 2
 mouse_filter = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_modal")
+theme_type_variation = &"ModalPanel"
 
 [node name="ContentMargin" type="MarginContainer" parent="SafeMargin/Modal"]
 layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
 
 [node name="Layout" type="VBoxContainer" parent="SafeMargin/Modal/ContentMargin"]
 layout_mode = 2
@@ -103,68 +68,215 @@ theme_override_constants/separation = 14
 
 [node name="Header" type="PanelContainer" parent="SafeMargin/Modal/ContentMargin/Layout"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_header")
+theme_type_variation = &"HeaderPanel"
 
 [node name="HeaderMargin" type="MarginContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
 
-[node name="HeaderRow" type="HBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin"]
+[node name="HeaderStack" type="VBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderRow" type="HBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Title" type="Label" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderRow"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.96, 0.84, 1)
-theme_override_font_sizes/font_size = 30
-text = "Garden Stall"
-vertical_alignment = 1
-
-[node name="Summary" type="Label" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderRow"]
-unique_name_in_owner = true
+[node name="TitleStack" type="VBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.82, 0.88, 0.73, 1)
-theme_override_font_sizes/font_size = 20
-text = "0 coins  •  0 / 0 plants"
-horizontal_alignment = 2
+alignment = 1
+theme_override_constants/separation = 1
+
+[node name="Kicker" type="Label" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow/TitleStack"]
+layout_mode = 2
+theme_type_variation = &"StallKickerLabel"
+text = "UI_STALL_KICKER"
+
+[node name="Title" type="Label" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow/TitleStack"]
+layout_mode = 2
+theme_type_variation = &"StallTitleLabel"
+text = "UI_STALL_TITLE"
+
+[node name="Subtitle" type="Label" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow/TitleStack"]
+layout_mode = 2
+theme_type_variation = &"StallHeaderSubtitle"
+text = "UI_STALL_SUBTITLE"
+autowrap_mode = 2
+max_lines_visible = 2
+
+[node name="SummaryBadge" type="PanelContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 64)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"SummaryBadge"
+
+[node name="SummaryMargin" type="MarginContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow/SummaryBadge"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="Summary" type="Label" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow/SummaryBadge/SummaryMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"StallSummaryLabel"
+text = "UI_SUMMARY_PLACEHOLDER"
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="CloseButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderRow"]
+[node name="CloseButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack/HeaderRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(72, 56)
+custom_minimum_size = Vector2(96, 64)
 layout_mode = 2
+size_flags_vertical = 4
 focus_neighbor_right = NodePath(".")
-theme_override_colors/font_color = Color(1, 0.96, 0.9, 1)
-theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_close")
-theme_override_styles/hover = SubResource("StyleBoxFlat_close")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_close_pressed")
-text = "Close"
+theme_type_variation = &"CoralButton"
+text = "UI_CLOSE"
+
+[node name="CompactSummarySlot" type="CenterContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Header/HeaderMargin/HeaderStack"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="PrimaryNavigation" type="PanelContainer" parent="SafeMargin/Modal/ContentMargin/Layout"]
+layout_mode = 2
+theme_type_variation = &"SegmentRail"
+
+[node name="PrimaryNavigationMargin" type="MarginContainer" parent="SafeMargin/Modal/ContentMargin/Layout/PrimaryNavigation"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="PrimarySegments" type="HBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/PrimaryNavigation/PrimaryNavigationMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CollectionButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/PrimaryNavigation/PrimaryNavigationMargin/PrimarySegments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PrimarySegmentButton"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_primary")
+text = "UI_COLLECTION"
+
+[node name="MarketButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/PrimaryNavigation/PrimaryNavigationMargin/PrimarySegments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PrimarySegmentButton"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_primary")
+text = "UI_MARKET"
+
+[node name="CustomizeButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/PrimaryNavigation/PrimaryNavigationMargin/PrimarySegments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"PrimarySegmentButton"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_primary")
+text = "UI_CUSTOMIZE"
+
+[node name="SecondaryNavigation" type="PanelContainer" parent="SafeMargin/Modal/ContentMargin/Layout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_type_variation = &"SegmentRail"
+
+[node name="SecondaryNavigationMargin" type="MarginContainer" parent="SafeMargin/Modal/ContentMargin/Layout/SecondaryNavigation"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="MarketSegments" type="HBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/SecondaryNavigation/SecondaryNavigationMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BuyButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/SecondaryNavigation/SecondaryNavigationMargin/MarketSegments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SecondarySegmentButton"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_market")
+text = "UI_BUY"
+
+[node name="SellButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/SecondaryNavigation/SecondaryNavigationMargin/MarketSegments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SecondarySegmentButton"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_market")
+text = "UI_SELL"
+
+[node name="CustomizeSegments" type="HBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/SecondaryNavigation/SecondaryNavigationMargin"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="JarsButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/SecondaryNavigation/SecondaryNavigationMargin/CustomizeSegments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SecondarySegmentButton"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_customize")
+text = "UI_JARS"
+
+[node name="PlacesButton" type="Button" parent="SafeMargin/Modal/ContentMargin/Layout/SecondaryNavigation/SecondaryNavigationMargin/CustomizeSegments"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"SecondarySegmentButton"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_customize")
+text = "UI_PLACES"
 
 [node name="Tabs" type="TabContainer" parent="SafeMargin/Modal/ContentMargin/Layout"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_selected_color = Color(0.96, 0.98, 0.88, 1)
-theme_override_colors/font_unselected_color = Color(0.72, 0.80, 0.70, 1)
-theme_override_font_sizes/font_size = 20
-theme_override_styles/tab_selected = SubResource("StyleBoxFlat_tab")
-theme_override_styles/tab_unselected = SubResource("StyleBoxFlat_tab_unselected")
+theme_type_variation = &"StallTabs"
+tabs_visible = false
 current_tab = 0
 
 [node name="Collection" type="ScrollContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Tabs"]
+unique_name_in_owner = true
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="CollectionRows" type="VBoxContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Tabs/Collection"]
+[node name="CollectionRows" type="GridContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Tabs/Collection"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 2
 
 [node name="Buy Plants" type="ScrollContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Tabs"]
 layout_mode = 2
@@ -174,7 +286,7 @@ horizontal_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="Sell Plants" type="ScrollContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Tabs"]
 layout_mode = 2
@@ -184,7 +296,7 @@ horizontal_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="Jars" type="ScrollContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Tabs"]
 layout_mode = 2
@@ -194,7 +306,7 @@ horizontal_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="Environments" type="ScrollContainer" parent="SafeMargin/Modal/ContentMargin/Layout/Tabs"]
 layout_mode = 2
@@ -204,4 +316,4 @@ horizontal_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12

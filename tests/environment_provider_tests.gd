@@ -11,6 +11,8 @@ func _init() -> void:
 	_test_negative_bias_wraps_to_previous_day()
 	_test_wrapped_day_window()
 	_test_environment_labels_are_offline_inputs()
+	_test_exact_light_durations_across_boundaries()
+	_test_light_durations_are_chunking_equivalent()
 
 	if _failures == 0:
 		print("Environment provider tests passed.")
@@ -103,6 +105,57 @@ func _test_environment_labels_are_offline_inputs() -> void:
 	_expect(day_snapshot.display_label == "Day - Clear", "Day display label includes local weather.")
 	_expect(night_snapshot.light_state == &"night", "Night uses the stable night identifier.")
 	_expect(night_snapshot.display_label == "Night - Humid", "Night display label includes local weather.")
+
+
+func _test_exact_light_durations_across_boundaries() -> void:
+	# Local interval 05:30 -> 19:30 with day 06:00 -> 18:00.
+	var durations := Provider.get_light_durations_between(
+		5.5 * 3600.0,
+		19.5 * 3600.0,
+		6,
+		18,
+		0,
+	)
+	_expect(
+		is_equal_approx(float(durations.sunlight_seconds), 12.0 * 3600.0),
+		"Light accumulation splits exactly at both day boundaries.",
+	)
+	_expect(
+		is_equal_approx(float(durations.moonlight_seconds), 2.0 * 3600.0),
+		"The remainder of a boundary-spanning interval is moonlight.",
+	)
+
+	var wrapped := Provider.get_light_durations_between(
+		19.0 * 3600.0,
+		31.0 * 3600.0,
+		20,
+		6,
+		0,
+	)
+	_expect(
+		is_equal_approx(float(wrapped.sunlight_seconds), 10.0 * 3600.0),
+		"Wrapped light windows accumulate exactly across midnight.",
+	)
+
+
+func _test_light_durations_are_chunking_equivalent() -> void:
+	var whole := Provider.get_light_durations_between(12345.25, 345678.75, 7, 19, 330)
+	var first := Provider.get_light_durations_between(12345.25, 200000.5, 7, 19, 330)
+	var second := Provider.get_light_durations_between(200000.5, 345678.75, 7, 19, 330)
+	_expect(
+		is_equal_approx(
+			float(whole.sunlight_seconds),
+			float(first.sunlight_seconds) + float(second.sunlight_seconds),
+		),
+		"One offline light interval matches chunked foreground accumulation.",
+	)
+	_expect(
+		is_equal_approx(
+			float(whole.moonlight_seconds),
+			float(first.moonlight_seconds) + float(second.moonlight_seconds),
+		),
+		"Moonlight accumulation is also chunking equivalent.",
+	)
 
 
 func _expect(condition: bool, message: String) -> void:

@@ -6,6 +6,8 @@ extends Resource
 @export var id: StringName = &""
 @export var display_name: String = ""
 @export_multiline var description: String = ""
+@export var display_name_key: StringName = &""
+@export var description_key: StringName = &""
 
 @export_group("Prototype Economy and Capacity (TBD)")
 @export_range(0, 1000000, 1, "or_greater") var price: int = 0

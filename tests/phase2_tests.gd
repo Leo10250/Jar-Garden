@@ -10,6 +10,7 @@ func _init() -> void:
 	_test_backward_clock()
 	_test_serialization_round_trip()
 	_test_schema_migration_and_validation()
+	_test_minimum_recovery_and_protection()
 	_test_save_file_handling()
 	_test_normalized_position_mapping()
 	_test_mouse_and_touch_dragging()
@@ -31,6 +32,8 @@ func _test_new_game_seed() -> void:
 		_expect(plant.instance_id == "plant_%06d" % (index + 1), "Seed IDs are stable and ordered.")
 		_expect(plant.variant_id == PlantState.BASE_VARIANT_ID, "Seed plants use the base variant.")
 		_expect(plant.position_normalized == GameState.INITIAL_PLANT_CENTERS[index], "Seed positions are normalized centers.")
+		_expect(plant.birth_source == PlantState.SOURCE_INITIAL, "Seed plants record their initial source.")
+		_expect(plant.birth_environment_id == GameState.DEFAULT_ENVIRONMENT_ID, "Seed plants record their birth environment.")
 
 
 func _test_lifecycle_boundaries_and_offline_time() -> void:
@@ -69,6 +72,10 @@ func _test_serialization_round_trip() -> void:
 	var state := GameState.create_new(3000, null, 330)
 	state.plants[0].lifecycle_elapsed_seconds = 73.5
 	state.plants[0].position_normalized = Vector2(0.21, 0.87)
+	state.plants[0].lifetime_sunlight_seconds = 123.5
+	state.plants[0].cultivation_direct_water_exposure = 0.75
+	state.plants[0].lifetime_wetness_seconds = 44.5
+	state.plants[0].cultivation_submerged_fraction_seconds = 12.25
 	state.rng_state = 9007199254740993
 	var restored := GameState.from_dict(state.to_dict(), 9999)
 
@@ -81,6 +88,10 @@ func _test_serialization_round_trip() -> void:
 	_expect(restored.plants[0].born_at_unix_seconds == 3000, "Birth timestamps survive a state round trip.")
 	_expect(is_equal_approx(restored.plants[0].lifecycle_elapsed_seconds, 73.5), "Lifecycle age survives a state round trip.")
 	_expect(restored.plants[0].position_normalized.is_equal_approx(Vector2(0.21, 0.87)), "Normalized position survives a state round trip.")
+	_expect(is_equal_approx(restored.plants[0].lifetime_sunlight_seconds, 123.5), "Lifetime cultivation history survives a state round trip.")
+	_expect(is_equal_approx(restored.plants[0].cultivation_direct_water_exposure, 0.75), "Current-environment cultivation history survives a state round trip.")
+	_expect(is_equal_approx(restored.plants[0].lifetime_wetness_seconds, 44.5), "Normalized lifetime wetness-seconds survive a state round trip.")
+	_expect(is_equal_approx(restored.plants[0].cultivation_submerged_fraction_seconds, 12.25), "Current fractional submersion-seconds survive a state round trip.")
 	_expect(restored.last_simulated_unix_seconds == 3000, "The simulation checkpoint survives a state round trip.")
 	_expect(restored.rng_state == 9007199254740993, "RNG state survives a dictionary round trip beyond JSON's exact-number range.")
 	_expect(restored.simulation_timezone_bias_minutes == 330, "The frozen simulation timezone survives a state round trip.")
@@ -98,7 +109,7 @@ func _test_schema_migration_and_validation() -> void:
 	var serialized := state.to_dict()
 	_expect(
 		typeof(serialized["rng_state"]) == TYPE_STRING,
-		"Schema v3 serializes RNG state as a decimal string.",
+		"Schema v4 serializes RNG state as a decimal string.",
 	)
 	_expect(
 		serialized["simulation_timezone_bias_minutes"] == -480,
@@ -110,7 +121,7 @@ func _test_schema_migration_and_validation() -> void:
 	legacy_v2["rng_state"] = 123456789
 	legacy_v2.erase("simulation_timezone_bias_minutes")
 	var migrated_v2 := GameState.from_dict(legacy_v2, 3500, null, 345)
-	_expect(migrated_v2 != null, "A valid numeric schema-v2 RNG state migrates to schema v3.")
+	_expect(migrated_v2 != null, "A valid numeric schema-v2 RNG state migrates to schema v4.")
 	if migrated_v2 != null:
 		_expect(migrated_v2.rng_state == 123456789, "Schema-v2 migration preserves its numeric RNG state.")
 		_expect(
@@ -119,28 +130,46 @@ func _test_schema_migration_and_validation() -> void:
 		)
 		_expect(
 			typeof(migrated_v2.to_dict()["rng_state"]) == TYPE_STRING,
-			"A migrated save is re-serialized with the schema-v3 RNG representation.",
+			"A migrated save is re-serialized with the schema-v4 RNG representation.",
 		)
 
 	var early_v3 := serialized.duplicate(true)
+	early_v3["schema_version"] = 3
 	early_v3.erase("simulation_timezone_bias_minutes")
 	var defaulted_v3 := GameState.from_dict(early_v3, 3500, null, 60)
 	_expect(
 		defaulted_v3 != null and defaulted_v3.simulation_timezone_bias_minutes == 60,
 		"An early schema-v3 save freezes the explicit fallback timezone bias once.",
 	)
+	if defaulted_v3 != null:
+		_expect(
+			defaulted_v3.cultivation_environment_id == defaulted_v3.active_environment_id,
+			"Schema-v3 migration starts a v4 cultivation segment in the active environment.",
+		)
+		_expect(
+			is_equal_approx(defaulted_v3.plants[0].lifetime_sunlight_seconds, 0.0),
+			"Unknown legacy cultivation history migrates conservatively to zero.",
+		)
+		_expect(
+			is_equal_approx(defaulted_v3.plants[0].lifetime_wetness_seconds, 0.0)
+			and is_equal_approx(
+				defaulted_v3.plants[0].lifetime_submerged_fraction_seconds,
+				0.0,
+			),
+			"Schema-v3 migration does not invent wetness or submersion history.",
+		)
 
 	var malformed_rng := serialized.duplicate(true)
 	malformed_rng["rng_state"] = "9007199254740993oops"
 	_expect(
 		GameState.from_dict(malformed_rng, 3500, null, -480) == null,
-		"A malformed schema-v3 RNG decimal string rejects the save.",
+		"A malformed schema-v4 RNG decimal string rejects the save.",
 	)
-	var numeric_v3_rng := serialized.duplicate(true)
-	numeric_v3_rng["rng_state"] = 123456789
+	var numeric_v4_rng := serialized.duplicate(true)
+	numeric_v4_rng["rng_state"] = 123456789
 	_expect(
-		GameState.from_dict(numeric_v3_rng, 3500, null, -480) == null,
-		"Schema v3 rejects a numeric RNG field that could lose 64-bit precision in JSON.",
+		GameState.from_dict(numeric_v4_rng, 3500, null, -480) == null,
+		"Schema v4 rejects a numeric RNG field that could lose 64-bit precision in JSON.",
 	)
 	var invalid_timezone := serialized.duplicate(true)
 	invalid_timezone["simulation_timezone_bias_minutes"] = "330"
@@ -150,8 +179,55 @@ func _test_schema_migration_and_validation() -> void:
 	)
 
 
+func _test_minimum_recovery_and_protection() -> void:
+	var tuning := _make_tuning()
+	var state := GameState.create_new(3700, tuning, 0)
+	var original_ids: Array[String] = []
+	for plant in state.plants:
+		original_ids.append(plant.instance_id)
+	for instance_id in original_ids:
+		_expect(state.remove_plant(instance_id, tuning), "Every original plant can be sold or deleted.")
+
+	_expect(
+		state.plants.size() == GameState.MINIMUM_RECOVERY_PLANTS,
+		"Removing every original plant deterministically restores a viable pair.",
+	)
+	_expect(
+		not state.plants[0].position_normalized.is_equal_approx(state.plants[1].position_normalized),
+		"Recovery plants use distinct safe positions.",
+	)
+	for plant in state.plants:
+		_expect(plant.birth_source == PlantState.SOURCE_RECOVERY, "Safety-net plants record their recovery source.")
+		_expect(state.is_ecology_anchor(plant), "The last recovery pair is explicitly queryable as ecology anchors.")
+		_expect(not state.can_sell_plant(plant), "Ecology anchors are not offered for sale.")
+		_expect(not state.can_remove_plant(plant.instance_id), "The last recovery pair cannot be sold repeatedly for coins.")
+		_expect(not state.remove_plant(plant.instance_id, tuning), "Removal enforces recovery-pair protection.")
+
+	var extra := state.spawn_plant_with_context(
+		PlantState.BASE_VARIANT_ID,
+		Vector2(0.5, 0.4),
+		3700,
+		tuning,
+		PlantState.SOURCE_PURCHASE,
+	)
+	_expect(extra != null and state.plants.size() == 3, "A normal third plant can join the recovery pair.")
+	var former_anchor := state.plants[0]
+	_expect(not state.is_ecology_anchor(former_anchor), "Recovery plants stop being anchors once the jar has a third plant.")
+	_expect(state.can_sell_plant(former_anchor), "A non-anchor recovery plant can be removed with a controller-enforced zero payout.")
+	_expect(state.remove_plant(former_anchor.instance_id, tuning), "A non-anchor recovery plant can be removed.")
+	_expect(state.plants.size() == 2, "Removing a non-anchor leaves a viable pair without spawning extras.")
+
+	var serialized_empty := state.to_dict()
+	serialized_empty["plants"] = []
+	var loaded_empty := GameState.from_dict(serialized_empty, 3700, tuning, 0)
+	_expect(
+		loaded_empty != null and loaded_empty.plants.size() == GameState.MINIMUM_RECOVERY_PLANTS,
+		"An empty persisted state is repaired deterministically during load.",
+	)
+
+
 func _test_save_file_handling() -> void:
-	var test_path := "user://phase2_test_%d.json" % Time.get_ticks_usec()
+	var test_path := TestTempPaths.make_path("phase2_test")
 	var state := GameState.create_new(4000, null, -420)
 	state.rng_state = 9007199254740993
 	_expect(LocalSave.save_state(state, test_path) == OK, "A state can be written to local JSON.")
@@ -186,7 +262,7 @@ func _test_save_file_handling() -> void:
 		var malformed_rng_result := LocalSave.load_state_result(4000, malformed_rng_path)
 		_expect(
 			malformed_rng_result.status == LocalSave.LoadStatus.INVALID,
-			"Local loading rejects a malformed schema-v3 RNG decimal string.",
+			"Local loading rejects a malformed schema-v4 RNG decimal string.",
 		)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(malformed_rng_path))
 

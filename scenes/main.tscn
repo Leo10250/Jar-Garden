@@ -1,119 +1,70 @@
-[gd_scene load_steps=17 format=3 uid="uid://b43f17faj48q1"]
+[gd_scene load_steps=18 format=3 uid="uid://b43f17faj48q1"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/plant.tscn" id="2_plant"]
 [ext_resource type="Resource" path="res://resources/prototype_mvp_tuning.tres" id="3_tuning"]
 [ext_resource type="Resource" path="res://resources/prototype_content_catalog.tres" id="4_catalog"]
 [ext_resource type="PackedScene" path="res://scenes/stall_panel.tscn" id="5_stall"]
+[ext_resource type="Theme" path="res://resources/ui_theme.tres" id="6_theme"]
+[ext_resource type="Script" path="res://scripts/safe_area_container.gd" id="7_safe_area"]
+[ext_resource type="Script" path="res://scripts/water_effects.gd" id="8_water_fx"]
+[ext_resource type="Texture2D" path="res://assets/icons/coin.svg" id="9_coin"]
+[ext_resource type="Texture2D" path="res://assets/icons/water.svg" id="10_water"]
+[ext_resource type="Texture2D" path="res://assets/icons/light.svg" id="11_light"]
+[ext_resource type="Texture2D" path="res://assets/icons/capacity.svg" id="12_capacity"]
+[ext_resource type="Texture2D" path="res://assets/icons/stall.svg" id="13_stall"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_foliage_far"]
-bg_color = Color(0.31, 0.53, 0.39, 1)
-corner_radius_top_left = 180
-corner_radius_top_right = 180
-corner_radius_bottom_right = 180
-corner_radius_bottom_left = 180
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_foliage_near"]
-bg_color = Color(0.20, 0.42, 0.31, 1)
-corner_radius_top_left = 220
-corner_radius_top_right = 220
-corner_radius_bottom_right = 220
-corner_radius_bottom_left = 220
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sun"]
-bg_color = Color(1, 0.86, 0.45, 1)
-corner_radius_top_left = 64
-corner_radius_top_right = 64
-corner_radius_bottom_right = 64
-corner_radius_bottom_left = 64
-shadow_color = Color(1, 0.78, 0.31, 0.25)
-shadow_size = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glass_back"]
-bg_color = Color(0.78, 0.93, 0.96, 0.24)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.83, 0.96, 0.98, 0.62)
-corner_radius_top_left = 44
-corner_radius_top_right = 44
-corner_radius_bottom_right = 104
-corner_radius_bottom_left = 104
-shadow_color = Color(0.05, 0.16, 0.13, 0.28)
-shadow_size = 18
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glass_outline"]
-bg_color = Color(0.82, 0.95, 0.98, 0.04)
-border_width_left = 6
-border_width_top = 6
-border_width_right = 6
-border_width_bottom = 6
-border_color = Color(0.89, 0.98, 1, 0.82)
-corner_radius_top_left = 44
-corner_radius_top_right = 44
-corner_radius_bottom_right = 104
-corner_radius_bottom_left = 104
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jar_rim"]
-bg_color = Color(0.78, 0.93, 0.96, 0.32)
-border_width_left = 6
-border_width_top = 6
-border_width_right = 6
-border_width_bottom = 6
-border_color = Color(0.91, 0.99, 1, 0.9)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-corner_radius_bottom_right = 30
-corner_radius_bottom_left = 30
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_water_button"]
-bg_color = Color(0.45, 0.73, 0.82, 1)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-shadow_color = Color(0.06, 0.19, 0.22, 0.28)
-shadow_size = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stall_button"]
-bg_color = Color(0.87, 0.72, 0.48, 1)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-shadow_color = Color(0.18, 0.12, 0.05, 0.25)
-shadow_size = 8
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-bg_color = Color(0.92, 0.9, 0.72, 1)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-shadow_color = Color(0.1, 0.15, 0.11, 0.2)
-shadow_size = 6
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
-bg_color = Color(0.60, 0.68, 0.56, 1)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_save_error"]
-bg_color = Color(0.105, 0.16, 0.13, 0.98)
+[sub_resource type="StyleBoxFlat" id="StyleBox_sun"]
+bg_color = Color(1, 0.858824, 0.45098, 0.94)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.64, 0.76, 0.62, 0.9)
-corner_radius_top_left = 26
-corner_radius_top_right = 26
-corner_radius_bottom_right = 26
-corner_radius_bottom_left = 26
-shadow_color = Color(0.02, 0.05, 0.04, 0.55)
+border_color = Color(1, 0.968627, 0.784314, 0.92)
+corner_radius_top_left = 46
+corner_radius_top_right = 46
+corner_radius_bottom_right = 46
+corner_radius_bottom_left = 46
+shadow_color = Color(0.25098, 0.196078, 0.0784314, 0.2)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_glass_back"]
+bg_color = Color(0.839216, 0.952941, 0.960784, 0.21)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.901961, 0.988235, 1, 0.46)
+corner_radius_top_left = 58
+corner_radius_top_right = 58
+corner_radius_bottom_right = 84
+corner_radius_bottom_left = 84
+shadow_color = Color(0.0431373, 0.145098, 0.113725, 0.22)
 shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_glass_outline"]
+bg_color = Color(0.807843, 0.94902, 0.960784, 0.025)
+border_width_left = 6
+border_width_top = 5
+border_width_right = 6
+border_width_bottom = 7
+border_color = Color(0.917647, 0.992157, 1, 0.88)
+corner_radius_top_left = 58
+corner_radius_top_right = 58
+corner_radius_bottom_right = 84
+corner_radius_bottom_left = 84
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_jar_rim"]
+bg_color = Color(0.803922, 0.945098, 0.956863, 0.36)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.945098, 1, 1, 0.94)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -122,6 +73,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("6_theme")
 script = ExtResource("1_main")
 plant_scene = ExtResource("2_plant")
 tuning = ExtResource("3_tuning")
@@ -136,6 +88,7 @@ wait_time = 30.0
 autostart = true
 
 [node name="ForestBackdrop" type="Control" parent="."]
+z_index = -10
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -152,7 +105,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.58, 0.76, 0.69, 1)
+color = Color(0.760784, 0.847059, 0.74902, 1)
+
+[node name="FarLayer" type="TextureRect" parent="ForestBackdrop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
 
 [node name="Mist" type="ColorRect" parent="ForestBackdrop"]
 layout_mode = 1
@@ -162,7 +126,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.89, 0.94, 0.82, 0.2)
+color = Color(0.945098, 0.929412, 0.831373, 0.08)
+
+[node name="MidLayer" type="TextureRect" parent="ForestBackdrop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
 
 [node name="IndoorWindow" type="Control" parent="ForestBackdrop"]
 visible = false
@@ -174,44 +149,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="LeftFrame" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
-layout_mode = 1
-anchor_right = 0.075
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color(0.28, 0.19, 0.13, 0.92)
-
-[node name="RightFrame" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
-layout_mode = 1
-anchor_left = 0.925
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color(0.28, 0.19, 0.13, 0.92)
-
-[node name="TopFrame" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
-layout_mode = 1
-anchor_right = 1.0
-anchor_bottom = 0.075
-mouse_filter = 2
-color = Color(0.28, 0.19, 0.13, 0.92)
-
-[node name="Mullion" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
-layout_mode = 1
-anchor_left = 0.485
-anchor_right = 0.515
-anchor_bottom = 0.78
-mouse_filter = 2
-color = Color(0.35, 0.24, 0.16, 0.72)
-
-[node name="Sill" type="ColorRect" parent="ForestBackdrop/IndoorWindow"]
-layout_mode = 1
-anchor_top = 0.72
-anchor_right = 1.0
-anchor_bottom = 0.79
-mouse_filter = 2
-color = Color(0.35, 0.24, 0.16, 0.92)
-
 [node name="RainforestVines" type="Control" parent="ForestBackdrop"]
 visible = false
 layout_mode = 1
@@ -222,39 +159,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Vine01" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
-layout_mode = 1
-anchor_left = 0.18
-anchor_right = 0.195
-anchor_bottom = 0.38
-mouse_filter = 2
-color = Color(0.12, 0.38, 0.18, 0.85)
-
-[node name="Vine02" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
-layout_mode = 1
-anchor_left = 0.39
-anchor_right = 0.405
-anchor_bottom = 0.27
-mouse_filter = 2
-color = Color(0.12, 0.38, 0.18, 0.78)
-
-[node name="Vine03" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
-layout_mode = 1
-anchor_left = 0.62
-anchor_right = 0.635
-anchor_bottom = 0.32
-mouse_filter = 2
-color = Color(0.12, 0.38, 0.18, 0.82)
-
-[node name="Vine04" type="ColorRect" parent="ForestBackdrop/RainforestVines"]
-layout_mode = 1
-anchor_left = 0.81
-anchor_right = 0.825
-anchor_bottom = 0.43
-mouse_filter = 2
-color = Color(0.12, 0.38, 0.18, 0.86)
-
-[node name="DistantFoliage" type="Control" parent="ForestBackdrop"]
+[node name="FrontLayer" type="TextureRect" parent="ForestBackdrop"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -262,58 +167,18 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
 
-[node name="CanopyTop" type="Panel" parent="ForestBackdrop/DistantFoliage"]
+[node name="NightTint" type="ColorRect" parent="ForestBackdrop"]
 layout_mode = 1
-anchor_left = -0.12
-anchor_top = -0.14
-anchor_right = 1.12
-anchor_bottom = 0.18
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_foliage_far")
-
-[node name="CrownLeft" type="Panel" parent="ForestBackdrop/DistantFoliage"]
-layout_mode = 1
-anchor_left = -0.2
-anchor_top = 0.08
-anchor_right = 0.32
-anchor_bottom = 0.46
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_foliage_near")
-
-[node name="CrownRight" type="Panel" parent="ForestBackdrop/DistantFoliage"]
-layout_mode = 1
-anchor_left = 0.68
-anchor_top = 0.06
-anchor_right = 1.2
-anchor_bottom = 0.44
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_foliage_near")
-
-[node name="LeftTree" type="ColorRect" parent="ForestBackdrop"]
-layout_mode = 1
-anchor_top = 0.25
-anchor_right = 0.105
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color(0.25, 0.26, 0.17, 1)
-
-[node name="RightTree" type="ColorRect" parent="ForestBackdrop"]
-layout_mode = 1
-anchor_left = 0.895
-anchor_top = 0.23
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-color = Color(0.25, 0.26, 0.17, 1)
-
-[node name="Ground" type="ColorRect" parent="ForestBackdrop"]
-layout_mode = 1
-anchor_top = 0.76
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color(0.24, 0.43, 0.29, 1)
+color = Color(0.0980392, 0.145098, 0.282353, 0)
 
 [node name="SafeArea" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -323,64 +188,68 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+script = ExtResource("7_safe_area")
+base_margins = Vector4(24, 22, 24, 30)
 
-[node name="GameArea" type="Control" parent="SafeArea"]
+[node name="GameArea" type="VBoxContainer" parent="SafeArea"]
 layout_mode = 2
 mouse_filter = 1
-
-[node name="SunSlot" type="CenterContainer" parent="SafeArea/GameArea"]
-layout_mode = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -120.0
-offset_top = 4.0
-offset_right = -8.0
-offset_bottom = 116.0
-grow_horizontal = 0
-mouse_filter = 2
-
-[node name="SunMoon" type="Panel" parent="SafeArea/GameArea/SunSlot"]
-custom_minimum_size = Vector2(96, 96)
-layout_mode = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_sun")
-
-[node name="StatusBar" type="HBoxContainer" parent="SafeArea/GameArea"]
-layout_mode = 1
-anchor_right = 0.78
-anchor_bottom = 0.055
-offset_right = -8.0
 theme_override_constants/separation = 12
 
-[node name="CoinsLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+[node name="StatusBar" type="GridContainer" parent="SafeArea/GameArea"]
+custom_minimum_size = Vector2(0, 104)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.11, 0.23, 0.17, 1)
-theme_override_font_sizes/font_size = 18
-text = "Coins 0"
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 8
+columns = 2
 
-[node name="WaterLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+[node name="CoinsLabel" type="Button" parent="SafeArea/GameArea/StatusBar"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.08, 0.27, 0.34, 1)
-theme_override_font_sizes/font_size = 18
-text = "Dry"
+size_flags_horizontal = 3
+mouse_filter = 2
+focus_mode = 0
+theme_type_variation = &"HudChip"
+icon = ExtResource("9_coin")
+icon_max_width = 27
+text = "UI_HUD_COINS"
 
-[node name="LightLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+[node name="WaterLabel" type="Button" parent="SafeArea/GameArea/StatusBar"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.19, 0.12, 1)
-theme_override_font_sizes/font_size = 18
-text = "Day"
+size_flags_horizontal = 3
+mouse_filter = 2
+focus_mode = 0
+theme_type_variation = &"HudChip"
+icon = ExtResource("10_water")
+icon_max_width = 27
+text = "WATER_DRY"
 
-[node name="CapacityLabel" type="Label" parent="SafeArea/GameArea/StatusBar"]
+[node name="LightLabel" type="Button" parent="SafeArea/GameArea/StatusBar"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.11, 0.23, 0.17, 1)
-theme_override_font_sizes/font_size = 18
-text = "5/12"
+size_flags_horizontal = 3
+mouse_filter = 2
+focus_mode = 0
+theme_type_variation = &"HudChip"
+icon = ExtResource("11_light")
+icon_max_width = 27
+text = "LIGHT_DAY"
+
+[node name="CapacityLabel" type="Button" parent="SafeArea/GameArea/StatusBar"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+focus_mode = 0
+theme_type_variation = &"HudChip"
+icon = ExtResource("12_capacity")
+icon_max_width = 27
+text = "UI_HUD_CAPACITY"
 
 [node name="JarSlot" type="AspectRatioContainer" parent="SafeArea/GameArea"]
-layout_mode = 1
-anchor_top = 0.06
-anchor_right = 1.0
-anchor_bottom = 0.86
+layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 1
 ratio = 0.68
 stretch_mode = 2
@@ -388,6 +257,24 @@ stretch_mode = 2
 [node name="Jar" type="Control" parent="SafeArea/GameArea/JarSlot"]
 layout_mode = 2
 mouse_filter = 1
+
+[node name="SunSlot" type="CenterContainer" parent="SafeArea/GameArea/JarSlot/Jar"]
+z_index = -1
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -106.0
+offset_top = 2.0
+offset_right = -10.0
+offset_bottom = 98.0
+grow_horizontal = 0
+mouse_filter = 2
+
+[node name="SunMoon" type="Panel" parent="SafeArea/GameArea/JarSlot/Jar/SunSlot"]
+custom_minimum_size = Vector2(82, 82)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_sun")
 
 [node name="GlassBack" type="Panel" parent="SafeArea/GameArea/JarSlot/Jar"]
 layout_mode = 1
@@ -397,7 +284,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glass_back")
+theme_override_styles/panel = SubResource("StyleBox_glass_back")
 
 [node name="PlantBounds" type="Control" parent="SafeArea/GameArea/JarSlot/Jar"]
 clip_contents = true
@@ -416,7 +303,30 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_vertical = 0
 mouse_filter = 2
-color = Color(0.25, 0.67, 0.86, 0.42)
+color = Color(0.286275, 0.690196, 0.827451, 0.52)
+
+[node name="WaterForeground" type="ColorRect" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds"]
+z_index = 8
+layout_mode = 1
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0.498039, 0.835294, 0.913725, 0.19)
+
+[node name="WaterEffects" type="Control" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds"]
+z_index = 12
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_water_fx")
+back_water_path = NodePath("../WaterLevel")
+front_water_path = NodePath("../WaterForeground")
 
 [node name="GlassHighlight" type="ColorRect" parent="SafeArea/GameArea/JarSlot/Jar"]
 z_index = 20
@@ -426,7 +336,7 @@ anchor_top = 0.13
 anchor_right = 0.17
 anchor_bottom = 0.82
 mouse_filter = 2
-color = Color(0.95, 1, 1, 0.28)
+color = Color(0.968627, 1, 1, 0.31)
 
 [node name="JarOutline" type="Panel" parent="SafeArea/GameArea/JarSlot/Jar"]
 z_index = 20
@@ -437,7 +347,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glass_outline")
+theme_override_styles/panel = SubResource("StyleBox_glass_outline")
 
 [node name="JarRim" type="Panel" parent="SafeArea/GameArea/JarSlot/Jar"]
 z_index = 20
@@ -447,62 +357,72 @@ anchor_top = 0.02
 anchor_right = 1.035
 anchor_bottom = 0.115
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_jar_rim")
+theme_override_styles/panel = SubResource("StyleBox_jar_rim")
 
 [node name="BottomBar" type="HBoxContainer" parent="SafeArea/GameArea"]
-layout_mode = 1
-anchor_top = 0.88
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme_override_constants/separation = 24
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_constants/separation = 12
 
 [node name="WaterButton" type="Button" parent="SafeArea/GameArea/BottomBar"]
-custom_minimum_size = Vector2(176, 76)
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_colors/font_color = Color(0.08, 0.2, 0.23, 1)
-theme_override_colors/font_hover_color = Color(0.08, 0.2, 0.23, 1)
-theme_override_colors/font_pressed_color = Color(0.95, 1, 0.96, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_water_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
-text = "Water"
-
-[node name="Spacer" type="Control" parent="SafeArea/GameArea/BottomBar"]
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_type_variation = &"WaterDockButton"
+icon = ExtResource("10_water")
+icon_max_width = 34
+text = "UI_WATER"
+
+[node name="Spacer" type="Control" parent="SafeArea/GameArea/BottomBar"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
 mouse_filter = 2
 
 [node name="StallButton" type="Button" parent="SafeArea/GameArea/BottomBar"]
-custom_minimum_size = Vector2(176, 76)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_override_colors/font_color = Color(0.24, 0.15, 0.07, 1)
-theme_override_colors/font_hover_color = Color(0.24, 0.15, 0.07, 1)
-theme_override_colors/font_pressed_color = Color(1, 0.98, 0.9, 1)
-theme_override_font_sizes/font_size = 28
-theme_override_styles/normal = SubResource("StyleBoxFlat_stall_button")
-theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
-text = "Stall"
+theme_type_variation = &"StallDockButton"
+icon = ExtResource("13_stall")
+icon_max_width = 36
+text = "UI_STALL"
 
-[node name="ToastLabel" type="Label" parent="SafeArea/GameArea"]
+[node name="ToastSafeArea" type="MarginContainer" parent="."]
+z_index = 80
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("7_safe_area")
+base_margins = Vector4(24, 22, 24, 30)
+
+[node name="ToastLayer" type="Control" parent="ToastSafeArea"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ToastPanel" type="PanelContainer" parent="ToastSafeArea/ToastLayer"]
 visible = false
 layout_mode = 1
-anchor_left = 0.15
-anchor_top = 0.82
-anchor_right = 0.85
-anchor_bottom = 0.875
+anchor_left = 0.1
+anchor_top = 0.79
+anchor_right = 0.9
+anchor_bottom = 0.865
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.96, 1, 0.94, 1)
-theme_override_colors/font_shadow_color = Color(0.08, 0.16, 0.12, 0.85)
-theme_override_constants/shadow_offset_x = 2
-theme_override_constants/shadow_offset_y = 2
-theme_override_font_sizes/font_size = 20
-text = "Garden updated"
+theme_type_variation = &"ToastPanel"
+
+[node name="ToastLabel" type="Label" parent="ToastSafeArea/ToastLayer/ToastPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.976471, 0.960784, 0.866667, 1)
+theme_override_font_sizes/font_size = 19
+text = "TOAST_NEW_PLANT"
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 2
 
 [node name="StallPanel" parent="." instance=ExtResource("5_stall")]
 z_index = 100
@@ -533,13 +453,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 36.0
-offset_top = 48.0
-offset_right = -36.0
-offset_bottom = -48.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+script = ExtResource("7_safe_area")
+base_margins = Vector4(36, 48, 36, 48)
 
 [node name="Center" type="CenterContainer" parent="SaveErrorOverlay/SafeMargin"]
 layout_mode = 2
@@ -547,7 +465,7 @@ layout_mode = 2
 [node name="Panel" type="PanelContainer" parent="SaveErrorOverlay/SafeMargin/Center"]
 custom_minimum_size = Vector2(520, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_save_error")
+theme_type_variation = &"ModalPanel"
 
 [node name="Margin" type="MarginContainer" parent="SaveErrorOverlay/SafeMargin/Center/Panel"]
 layout_mode = 2
@@ -562,18 +480,18 @@ theme_override_constants/separation = 24
 
 [node name="Title" type="Label" parent="SaveErrorOverlay/SafeMargin/Center/Panel/Margin/Layout"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.94, 0.76, 1)
+theme_override_colors/font_color = Color(0.0862745, 0.227451, 0.176471, 1)
 theme_override_font_sizes/font_size = 30
-text = "Save needs attention"
+text = "UI_SAVE_TITLE"
 horizontal_alignment = 1
 
 [node name="SaveErrorMessage" type="Label" parent="SaveErrorOverlay/SafeMargin/Center/Panel/Margin/Layout"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_color = Color(0.88, 0.94, 0.86, 1)
+theme_override_colors/font_color = Color(0.14902, 0.294118, 0.231373, 1)
 theme_override_font_sizes/font_size = 20
-text = "Jar Garden preserved your save and locked this session."
+text = "UI_SAVE_DEFAULT_MESSAGE"
 horizontal_alignment = 1
 autowrap_mode = 2
 
@@ -582,5 +500,5 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 66)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 22
-text = "Close Jar Garden"
+theme_type_variation = &"CoralButton"
+text = "UI_SAVE_CLOSE"

@@ -1,6 +1,106 @@
-[gd_resource type="Resource" script_class="MvpTuning" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="MvpTuning" load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/mvp_tuning.gd" id="1_tuning"]
+[ext_resource type="Script" path="res://scripts/plant_mutation_recipe.gd" id="2_recipe"]
+
+[sub_resource type="Resource" id="Recipe_leaf_cap_forest"]
+script = ExtResource("2_recipe")
+id = &"leaf_cap_forest"
+target_variant_id = &"leaf_cap"
+weight = 1.0
+allows_environmental = true
+allows_reproduction = true
+required_environment_id = &"forest"
+required_light_state = &"day"
+required_water_state = &"moist"
+
+[sub_resource type="Resource" id="Recipe_moss_cushion_forest"]
+script = ExtResource("2_recipe")
+id = &"moss_cushion_forest"
+target_variant_id = &"moss_cushion"
+weight = 0.8
+allows_environmental = true
+allows_reproduction = false
+required_environment_id = &"forest"
+required_light_state = &"balanced"
+required_water_state = &"wet"
+
+[sub_resource type="Resource" id="Recipe_moonbell_moonlit"]
+script = ExtResource("2_recipe")
+id = &"moonbell_moonlit"
+target_variant_id = &"moonbell"
+weight = 0.65
+allows_environmental = false
+allows_reproduction = true
+required_environment_id = &"forest"
+required_light_state = &"night"
+required_water_state = &"moist"
+
+[sub_resource type="Resource" id="Recipe_blush_window"]
+script = ExtResource("2_recipe")
+id = &"blush_window"
+target_variant_id = &"blush_color"
+weight = 1.0
+allows_environmental = true
+allows_reproduction = true
+required_environment_id = &"indoor_window"
+required_light_state = &"day"
+required_water_state = &"moist"
+
+[sub_resource type="Resource" id="Recipe_tiny_gardener_pair"]
+script = ExtResource("2_recipe")
+id = &"tiny_gardener_pair"
+target_variant_id = &"tiny_gardener"
+weight = 1.0
+allows_environmental = false
+allows_reproduction = true
+required_environment_id = &"indoor_window"
+required_light_state = &"balanced"
+required_water_state = &"moist"
+required_parent_variant_ids = Array[StringName]([&"base_common", &"blush_color"])
+
+[sub_resource type="Resource" id="Recipe_sunpatch_window"]
+script = ExtResource("2_recipe")
+id = &"sunpatch_window"
+target_variant_id = &"sunpatch"
+weight = 0.75
+allows_environmental = true
+allows_reproduction = false
+required_environment_id = &"indoor_window"
+required_light_state = &"day"
+required_water_state = &"dry"
+
+[sub_resource type="Resource" id="Recipe_rainbell_rainforest"]
+script = ExtResource("2_recipe")
+id = &"rainbell_rainforest"
+target_variant_id = &"rainbell"
+weight = 0.75
+allows_environmental = true
+allows_reproduction = true
+required_environment_id = &"rainforest"
+required_water_state = &"submerged"
+
+[sub_resource type="Resource" id="Recipe_fern_curl_rainforest"]
+script = ExtResource("2_recipe")
+id = &"fern_curl_rainforest"
+target_variant_id = &"fern_curl"
+weight = 0.9
+allows_environmental = false
+allows_reproduction = true
+required_environment_id = &"rainforest"
+required_light_state = &"day"
+required_water_state = &"wet"
+
+[sub_resource type="Resource" id="Recipe_glow_pod_rainforest"]
+script = ExtResource("2_recipe")
+id = &"glow_pod_rainforest"
+target_variant_id = &"glow_pod"
+weight = 0.55
+allows_environmental = true
+allows_reproduction = false
+required_environment_id = &"rainforest"
+required_light_state = &"night"
+required_water_state = &"wet"
 
 [resource]
 script = ExtResource("1_tuning")
@@ -11,6 +111,9 @@ autosave_interval_seconds = 30.0
 water_level_per_press = 0.22
 top_wetness_per_press = 0.42
 bottom_watering_multiplier = 0.25
+side_watering_multiplier = 0.2
+watering_stream_x_normalized = 0.5
+watering_horizontal_reach = 0.5
 water_evaporation_per_second = 0.0025
 wetness_decay_per_second = 0.0018
 submerged_wetting_per_second = 0.015
@@ -24,6 +127,13 @@ day_reproduction_multiplier = 1.0
 night_reproduction_multiplier = 1.1
 day_mutation_multiplier = 0.9
 night_mutation_multiplier = 1.15
+mutation_fallback_variant_id = &"base_common"
+mutation_recipes = Array[ExtResource("2_recipe")]([SubResource("Recipe_leaf_cap_forest"), SubResource("Recipe_moss_cushion_forest"), SubResource("Recipe_moonbell_moonlit"), SubResource("Recipe_blush_window"), SubResource("Recipe_tiny_gardener_pair"), SubResource("Recipe_sunpatch_window"), SubResource("Recipe_rainbell_rainforest"), SubResource("Recipe_fern_curl_rainforest"), SubResource("Recipe_glow_pod_rainforest")])
+mutation_minimum_cultivation_seconds = 60.0
+mutation_light_dominance_share = 0.65
+mutation_dry_to_moist_threshold = 0.2
+mutation_moist_to_wet_threshold = 0.5
+mutation_submerged_average_threshold = 0.5
 reproduction_contact_distance = 0.17
 reproduction_attempt_seconds = 20.0
 reproduction_base_success_chance = 0.55
@@ -32,6 +142,7 @@ reproduction_mutation_chance = 0.16
 offspring_position_jitter = 0.05
 reproduction_limit_min = 1
 reproduction_limit_max = 5
+reproduction_canonical_plant_bounds_size = Vector2(540, 780)
 spawn_interval_min_seconds = 45.0
 spawn_interval_max_seconds = 75.0
 spawn_base_success_chance = 0.65

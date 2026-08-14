@@ -1,59 +1,212 @@
-[gd_resource type="Resource" script_class="ContentCatalog" load_steps=14 format=3]
+[gd_resource type="Resource" script_class="ContentCatalog" load_steps=53 format=3]
 
 [ext_resource type="Script" path="res://scripts/content_catalog.gd" id="1_catalog"]
 [ext_resource type="Script" path="res://scripts/plant_variant_definition.gd" id="2_variant"]
 [ext_resource type="Script" path="res://scripts/jar_definition.gd" id="3_jar"]
 [ext_resource type="Script" path="res://scripts/environment_definition.gd" id="4_environment"]
+[ext_resource type="Script" path="res://scripts/plant_visual_definition.gd" id="5_visual"]
+[ext_resource type="Texture2D" path="res://assets/plants/base_common.png" id="plant_base_common"]
+[ext_resource type="Texture2D" path="res://assets/plants/leaf_cap.png" id="plant_leaf_cap"]
+[ext_resource type="Texture2D" path="res://assets/plants/moss_cushion.png" id="plant_moss_cushion"]
+[ext_resource type="Texture2D" path="res://assets/plants/moonbell.png" id="plant_moonbell"]
+[ext_resource type="Texture2D" path="res://assets/plants/blush_color.png" id="plant_blush_color"]
+[ext_resource type="Texture2D" path="res://assets/plants/tiny_gardener.png" id="plant_tiny_gardener"]
+[ext_resource type="Texture2D" path="res://assets/plants/sunpatch.png" id="plant_sunpatch"]
+[ext_resource type="Texture2D" path="res://assets/plants/rainbell.png" id="plant_rainbell"]
+[ext_resource type="Texture2D" path="res://assets/plants/fern_curl.png" id="plant_fern_curl"]
+[ext_resource type="Texture2D" path="res://assets/plants/glow_pod.png" id="plant_glow_pod"]
+[ext_resource type="Texture2D" path="res://assets/environments/forest/far.png" id="forest_far"]
+[ext_resource type="Texture2D" path="res://assets/environments/forest/mid.png" id="forest_mid"]
+[ext_resource type="Texture2D" path="res://assets/environments/forest/front.png" id="forest_front"]
+[ext_resource type="Texture2D" path="res://assets/environments/forest/thumbnail.png" id="forest_thumbnail"]
+[ext_resource type="Texture2D" path="res://assets/environments/indoor_window/far.png" id="window_far"]
+[ext_resource type="Texture2D" path="res://assets/environments/indoor_window/mid.png" id="window_mid"]
+[ext_resource type="Texture2D" path="res://assets/environments/indoor_window/front.png" id="window_front"]
+[ext_resource type="Texture2D" path="res://assets/environments/indoor_window/thumbnail.png" id="window_thumbnail"]
+[ext_resource type="Texture2D" path="res://assets/environments/rainforest/far.png" id="rainforest_far"]
+[ext_resource type="Texture2D" path="res://assets/environments/rainforest/mid.png" id="rainforest_mid"]
+[ext_resource type="Texture2D" path="res://assets/environments/rainforest/front.png" id="rainforest_front"]
+[ext_resource type="Texture2D" path="res://assets/environments/rainforest/thumbnail.png" id="rainforest_thumbnail"]
+
+[sub_resource type="Resource" id="PlantVisual_base_common"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_base_common")
+visual_offset = Vector2(0, -8)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(80, 64)
+hitbox_offset = Vector2(0, 8)
+hitbox_polygon = PackedVector2Array(-38, 18, -40, 4, -34, -18, -22, -30, 0, -34, 22, -30, 34, -18, 40, 4, 38, 18, 28, 28, -28, 28)
+young_scale = 0.76
+old_scale = 0.93
+adult_motion_period_seconds = 1.9
+idle_bob_pixels = 1.3
+idle_squash_amount = 0.02
 
 [sub_resource type="Resource" id="PlantVariant_base_common"]
 script = ExtResource("2_variant")
 id = &"base_common"
 display_name = "Common Blob"
-description = "Prototype/TBD: the familiar soft white dumpling-like plant."
+description = "The familiar soft white dumpling creature at the heart of the jar."
+display_name_key = &"PLANT_BASE_COMMON_NAME"
+description_key = &"PLANT_BASE_COMMON_DESCRIPTION"
 rarity = &"common"
+undiscovered_hint_key = &"PLANT_BASE_COMMON_HINT"
+discovered_recipe_key = &"PLANT_BASE_COMMON_RECIPE"
+visual = SubResource("PlantVisual_base_common")
 body_color = Color(0.985, 0.985, 0.97, 1)
-head_accessory = &"none"
-equipment = &"none"
-mutation_weight = 0.0
-reproduction_difficulty = 1.0
 adult_sell_value = 4
 young_buy_price = 6
 
-[sub_resource type="Resource" id="PlantVariant_blush_color"]
-script = ExtResource("2_variant")
-id = &"blush_color"
-display_name = "Blush Blob"
-description = "Prototype/TBD color mutation used to test an immediately visible discovery."
-rarity = &"uncommon"
-body_color = Color(0.96, 0.69, 0.73, 1)
-head_accessory = &"none"
-equipment = &"none"
-mutation_weight = 1.0
-reproduction_difficulty = 1.1
-adult_sell_value = 9
-young_buy_price = 15
+[sub_resource type="Resource" id="PlantVisual_leaf_cap"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_leaf_cap")
+visual_offset = Vector2(0, -2)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(72, 78)
+hitbox_offset = Vector2(0, 2)
+hitbox_polygon = PackedVector2Array(-32, 24, -36, 8, -30, -12, -18, -32, 0, -39, 18, -32, 30, -12, 36, 8, 32, 24, 20, 34, -20, 34)
+young_scale = 0.74
+old_scale = 0.91
+adult_motion_period_seconds = 1.7
+idle_bob_pixels = 1.7
+idle_squash_amount = 0.017
 
 [sub_resource type="Resource" id="PlantVariant_leaf_cap"]
 script = ExtResource("2_variant")
 id = &"leaf_cap"
-display_name = "Leaf-Cap Blob"
-description = "Prototype/TBD headwear mutation represented by a simple leaf-cap selector."
+display_name = "Leaf Cap"
+description = "A pear-shaped sprout wearing one broad green leaf like a cap."
+display_name_key = &"PLANT_LEAF_CAP_NAME"
+description_key = &"PLANT_LEAF_CAP_DESCRIPTION"
 rarity = &"uncommon"
-body_color = Color(0.985, 0.985, 0.97, 1)
+undiscovered_hint_key = &"PLANT_LEAF_CAP_HINT"
+discovered_recipe_key = &"PLANT_LEAF_CAP_RECIPE"
+visual = SubResource("PlantVisual_leaf_cap")
 head_accessory = &"leaf_cap"
-equipment = &"none"
 mutation_weight = 0.65
 reproduction_difficulty = 1.2
 adult_sell_value = 14
 young_buy_price = 23
 
+[sub_resource type="Resource" id="PlantVisual_moss_cushion"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_moss_cushion")
+visual_offset = Vector2(0, -21)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(84, 44)
+hitbox_offset = Vector2(0, 21)
+hitbox_polygon = PackedVector2Array(-40, 14, -38, 2, -28, -10, -10, -16, 12, -16, 30, -10, 40, 2, 42, 14, 32, 22, -32, 22)
+young_scale = 0.8
+old_scale = 0.94
+adult_motion_period_seconds = 2.5
+idle_bob_pixels = 0.7
+idle_squash_amount = 0.012
+
+[sub_resource type="Resource" id="PlantVariant_moss_cushion"]
+script = ExtResource("2_variant")
+id = &"moss_cushion"
+display_name = "Moss Cushion"
+description = "A low, velvety moss pillow with a calm little face."
+display_name_key = &"PLANT_MOSS_CUSHION_NAME"
+description_key = &"PLANT_MOSS_CUSHION_DESCRIPTION"
+rarity = &"uncommon"
+undiscovered_hint_key = &"PLANT_MOSS_CUSHION_HINT"
+discovered_recipe_key = &"PLANT_MOSS_CUSHION_RECIPE"
+visual = SubResource("PlantVisual_moss_cushion")
+body_color = Color(0.67, 0.75, 0.37, 1)
+mutation_weight = 0.8
+reproduction_difficulty = 1.1
+adult_sell_value = 12
+young_buy_price = 20
+
+[sub_resource type="Resource" id="PlantVisual_moonbell"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_moonbell")
+visual_offset = Vector2(0, -4)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(76, 72)
+hitbox_offset = Vector2(0, 4)
+hitbox_polygon = PackedVector2Array(-4, -38, 18, -28, 32, -8, 38, 18, 28, 32, -28, 32, -38, 18, -32, -8, -18, -28)
+young_scale = 0.72
+old_scale = 0.9
+adult_motion_period_seconds = 1.75
+idle_bob_pixels = 1.9
+idle_squash_amount = 0.016
+
+[sub_resource type="Resource" id="PlantVariant_moonbell"]
+script = ExtResource("2_variant")
+id = &"moonbell"
+display_name = "Moonbell"
+description = "A pale bell-drop creature carrying a quiet crescent mark."
+display_name_key = &"PLANT_MOONBELL_NAME"
+description_key = &"PLANT_MOONBELL_DESCRIPTION"
+rarity = &"rare"
+undiscovered_hint_key = &"PLANT_MOONBELL_HINT"
+discovered_recipe_key = &"PLANT_MOONBELL_RECIPE"
+visual = SubResource("PlantVisual_moonbell")
+body_color = Color(0.78, 0.79, 0.98, 1)
+mutation_weight = 0.65
+reproduction_difficulty = 1.35
+adult_sell_value = 20
+young_buy_price = 33
+
+[sub_resource type="Resource" id="PlantVisual_blush_color"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_blush_color")
+visual_offset = Vector2(0, -8)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(80, 64)
+hitbox_offset = Vector2(0, 8)
+hitbox_polygon = PackedVector2Array(-38, 18, -40, 4, -34, -18, -22, -30, 0, -34, 22, -30, 34, -18, 40, 4, 38, 18, 28, 28, -28, 28)
+young_scale = 0.76
+old_scale = 0.93
+adult_motion_period_seconds = 1.9
+idle_bob_pixels = 1.3
+idle_squash_amount = 0.02
+
+[sub_resource type="Resource" id="PlantVariant_blush_color"]
+script = ExtResource("2_variant")
+id = &"blush_color"
+display_name = "Blush Blob"
+description = "The round dumpling silhouette warmed through with a coral blush."
+display_name_key = &"PLANT_BLUSH_COLOR_NAME"
+description_key = &"PLANT_BLUSH_COLOR_DESCRIPTION"
+rarity = &"uncommon"
+undiscovered_hint_key = &"PLANT_BLUSH_COLOR_HINT"
+discovered_recipe_key = &"PLANT_BLUSH_COLOR_RECIPE"
+visual = SubResource("PlantVisual_blush_color")
+body_color = Color(0.96, 0.69, 0.73, 1)
+mutation_weight = 1.0
+reproduction_difficulty = 1.1
+adult_sell_value = 9
+young_buy_price = 15
+
+[sub_resource type="Resource" id="PlantVisual_tiny_gardener"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_tiny_gardener")
+visual_offset = Vector2(0, -2)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(66, 80)
+hitbox_offset = Vector2(0, 2)
+hitbox_polygon = PackedVector2Array(-18, -39, 18, -39, 30, -28, 34, -8, 34, 16, 28, 32, 18, 39, -18, 39, -28, 32, -34, 16, -34, -8, -30, -28)
+young_scale = 0.72
+old_scale = 0.93
+adult_motion_period_seconds = 1.55
+idle_bob_pixels = 1.5
+idle_squash_amount = 0.022
+
 [sub_resource type="Resource" id="PlantVariant_tiny_gardener"]
 script = ExtResource("2_variant")
 id = &"tiny_gardener"
 display_name = "Tiny Gardener"
-description = "Prototype/TBD combination mutation with simple headwear and equipment selectors."
+description = "A squat bean-shaped helper bundled in a soft hat and watering gear."
+display_name_key = &"PLANT_TINY_GARDENER_NAME"
+description_key = &"PLANT_TINY_GARDENER_DESCRIPTION"
 rarity = &"rare"
-body_color = Color(0.72, 0.86, 0.78, 1)
+undiscovered_hint_key = &"PLANT_TINY_GARDENER_HINT"
+discovered_recipe_key = &"PLANT_TINY_GARDENER_RECIPE"
+visual = SubResource("PlantVisual_tiny_gardener")
+body_color = Color(0.88, 0.82, 0.63, 1)
 head_accessory = &"sun_hat"
 equipment = &"watering_can"
 mutation_weight = 0.3
@@ -61,11 +214,137 @@ reproduction_difficulty = 1.35
 adult_sell_value = 22
 young_buy_price = 36
 
+[sub_resource type="Resource" id="PlantVisual_sunpatch"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_sunpatch")
+visual_offset = Vector2(0, -2)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(44, 80)
+hitbox_offset = Vector2(0, 2)
+hitbox_polygon = PackedVector2Array(-10, -40, 10, -40, 20, -28, 22, 20, 16, 34, 10, 40, -10, 40, -16, 34, -22, 20, -20, -28)
+young_scale = 0.7
+old_scale = 0.9
+adult_motion_period_seconds = 2.05
+idle_bob_pixels = 1.2
+idle_squash_amount = 0.014
+
+[sub_resource type="Resource" id="PlantVariant_sunpatch"]
+script = ExtResource("2_variant")
+id = &"sunpatch"
+display_name = "Sunpatch"
+description = "A tall golden pod whose scalloped side seems brushed with daylight."
+display_name_key = &"PLANT_SUNPATCH_NAME"
+description_key = &"PLANT_SUNPATCH_DESCRIPTION"
+rarity = &"uncommon"
+undiscovered_hint_key = &"PLANT_SUNPATCH_HINT"
+discovered_recipe_key = &"PLANT_SUNPATCH_RECIPE"
+visual = SubResource("PlantVisual_sunpatch")
+body_color = Color(1, 0.75, 0.24, 1)
+mutation_weight = 0.75
+reproduction_difficulty = 1.25
+adult_sell_value = 16
+young_buy_price = 26
+
+[sub_resource type="Resource" id="PlantVisual_rainbell"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_rainbell")
+visual_offset = Vector2(0, -6)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(76, 72)
+hitbox_offset = Vector2(0, 6)
+hitbox_polygon = PackedVector2Array(-4, -38, 18, -28, 32, -8, 38, 18, 28, 32, -28, 32, -38, 18, -32, -8, -18, -28)
+young_scale = 0.72
+old_scale = 0.9
+adult_motion_period_seconds = 1.75
+idle_bob_pixels = 1.9
+idle_squash_amount = 0.016
+
+[sub_resource type="Resource" id="PlantVariant_rainbell"]
+script = ExtResource("2_variant")
+id = &"rainbell"
+display_name = "Rainbell"
+description = "A clear blue bell-drop with tiny beads gathered along its hem."
+display_name_key = &"PLANT_RAINBELL_NAME"
+description_key = &"PLANT_RAINBELL_DESCRIPTION"
+rarity = &"rare"
+undiscovered_hint_key = &"PLANT_RAINBELL_HINT"
+discovered_recipe_key = &"PLANT_RAINBELL_RECIPE"
+visual = SubResource("PlantVisual_rainbell")
+body_color = Color(0.31, 0.76, 0.92, 1)
+mutation_weight = 0.75
+reproduction_difficulty = 1.35
+adult_sell_value = 21
+young_buy_price = 34
+
+[sub_resource type="Resource" id="PlantVisual_fern_curl"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_fern_curl")
+visual_offset = Vector2(0, -2)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(76, 80)
+hitbox_offset = Vector2(0, 2)
+hitbox_polygon = PackedVector2Array(-24, 34, -36, 24, -38, 4, -30, -22, -14, -38, 10, -40, 30, -28, 38, -10, 34, 10, 28, 28, 14, 38, -12, 38)
+young_scale = 0.72
+old_scale = 0.92
+adult_motion_period_seconds = 2.15
+idle_bob_pixels = 1.25
+idle_squash_amount = 0.014
+
+[sub_resource type="Resource" id="PlantVariant_fern_curl"]
+script = ExtResource("2_variant")
+id = &"fern_curl"
+display_name = "Fern Curl"
+description = "A broad green fiddlehead curled into a living spiral."
+display_name_key = &"PLANT_FERN_CURL_NAME"
+description_key = &"PLANT_FERN_CURL_DESCRIPTION"
+rarity = &"rare"
+undiscovered_hint_key = &"PLANT_FERN_CURL_HINT"
+discovered_recipe_key = &"PLANT_FERN_CURL_RECIPE"
+visual = SubResource("PlantVisual_fern_curl")
+body_color = Color(0.55, 0.74, 0.35, 1)
+mutation_weight = 0.9
+reproduction_difficulty = 1.45
+adult_sell_value = 24
+young_buy_price = 40
+
+[sub_resource type="Resource" id="PlantVisual_glow_pod"]
+script = ExtResource("5_visual")
+main_texture = ExtResource("plant_glow_pod")
+visual_offset = Vector2(0, -2)
+visual_scale = Vector2(0.2, 0.2)
+hitbox_size = Vector2(44, 80)
+hitbox_offset = Vector2(0, 2)
+hitbox_polygon = PackedVector2Array(-10, -40, 10, -40, 20, -28, 22, 20, 16, 34, 10, 40, -10, 40, -16, 34, -22, 20, -20, -28)
+young_scale = 0.7
+old_scale = 0.9
+adult_motion_period_seconds = 2.2
+idle_bob_pixels = 1.6
+idle_squash_amount = 0.014
+
+[sub_resource type="Resource" id="PlantVariant_glow_pod"]
+script = ExtResource("2_variant")
+id = &"glow_pod"
+display_name = "Glow Pod"
+description = "A slender night pod dotted with pond-blue and firefly-green light."
+display_name_key = &"PLANT_GLOW_POD_NAME"
+description_key = &"PLANT_GLOW_POD_DESCRIPTION"
+rarity = &"very_rare"
+undiscovered_hint_key = &"PLANT_GLOW_POD_HINT"
+discovered_recipe_key = &"PLANT_GLOW_POD_RECIPE"
+visual = SubResource("PlantVisual_glow_pod")
+body_color = Color(0.12, 0.56, 0.52, 1)
+mutation_weight = 0.55
+reproduction_difficulty = 1.6
+adult_sell_value = 34
+young_buy_price = 56
+
 [sub_resource type="Resource" id="Jar_default_glass"]
 script = ExtResource("3_jar")
 id = &"default_glass"
 display_name = "Clear Glass Jar"
 description = "Prototype/TBD default jar with neutral modifiers."
+display_name_key = &"JAR_DEFAULT_GLASS_NAME"
+description_key = &"JAR_DEFAULT_GLASS_DESCRIPTION"
 price = 0
 capacity = 12
 glass_fill_color = Color(0.78, 0.93, 0.96, 0.24)
@@ -79,6 +358,8 @@ script = ExtResource("3_jar")
 id = &"moss_glass"
 display_name = "Moss-Tinted Jar"
 description = "Prototype/TBD alternative jar for testing capacity and environment modifiers."
+display_name_key = &"JAR_MOSS_GLASS_NAME"
+description_key = &"JAR_MOSS_GLASS_DESCRIPTION"
 price = 80
 capacity = 16
 glass_fill_color = Color(0.64, 0.84, 0.7, 0.3)
@@ -91,13 +372,20 @@ reproduction_modifier = 1.1
 script = ExtResource("4_environment")
 id = &"forest"
 display_name = "Forest"
-description = "Prototype/TBD default environment with neutral modifiers."
+description = "A soft woodland clearing in warm sage and cream."
+display_name_key = &"ENV_FOREST_NAME"
+description_key = &"ENV_FOREST_DESCRIPTION"
+far_texture = ExtResource("forest_far")
+mid_texture = ExtResource("forest_mid")
+front_texture = ExtResource("forest_front")
+thumbnail_texture = ExtResource("forest_thumbnail")
 price = 0
 sky_color = Color(0.58, 0.76, 0.69, 1)
 ground_color = Color(0.24, 0.43, 0.29, 1)
 accent_color = Color(0.31, 0.53, 0.39, 1)
 visual_style = &"forest"
 local_weather_label = "Calm"
+weather_label_key = &"ENV_FOREST_WEATHER"
 evaporation_modifier = 1.0
 spawn_modifier = 1.0
 reproduction_modifier = 1.0
@@ -107,13 +395,20 @@ mutation_modifier = 1.0
 script = ExtResource("4_environment")
 id = &"indoor_window"
 display_name = "Window Nook"
-description = "Prototype/TBD sheltered environment with a warm indoor palette."
+description = "A sheltered window seat washed in gentle indoor daylight."
+display_name_key = &"ENV_INDOOR_WINDOW_NAME"
+description_key = &"ENV_INDOOR_WINDOW_DESCRIPTION"
+far_texture = ExtResource("window_far")
+mid_texture = ExtResource("window_mid")
+front_texture = ExtResource("window_front")
+thumbnail_texture = ExtResource("window_thumbnail")
 price = 55
 sky_color = Color(0.83, 0.78, 0.67, 1)
 ground_color = Color(0.46, 0.34, 0.25, 1)
 accent_color = Color(0.91, 0.71, 0.44, 1)
 visual_style = &"indoor"
 local_weather_label = "Sheltered"
+weather_label_key = &"ENV_INDOOR_WINDOW_WEATHER"
 evaporation_modifier = 0.9
 spawn_modifier = 0.85
 reproduction_modifier = 1.05
@@ -123,13 +418,20 @@ mutation_modifier = 0.9
 script = ExtResource("4_environment")
 id = &"rainforest"
 display_name = "Rainforest"
-description = "Prototype/TBD humid environment for testing stronger environmental modifiers."
+description = "A humid, layered green refuge with rain-softened depth."
+display_name_key = &"ENV_RAINFOREST_NAME"
+description_key = &"ENV_RAINFOREST_DESCRIPTION"
+far_texture = ExtResource("rainforest_far")
+mid_texture = ExtResource("rainforest_mid")
+front_texture = ExtResource("rainforest_front")
+thumbnail_texture = ExtResource("rainforest_thumbnail")
 price = 130
 sky_color = Color(0.38, 0.64, 0.5, 1)
 ground_color = Color(0.12, 0.33, 0.21, 1)
 accent_color = Color(0.52, 0.78, 0.38, 1)
 visual_style = &"rainforest"
 local_weather_label = "Humid"
+weather_label_key = &"ENV_RAINFOREST_WEATHER"
 evaporation_modifier = 0.7
 spawn_modifier = 1.2
 reproduction_modifier = 1.1
@@ -137,6 +439,6 @@ mutation_modifier = 1.25
 
 [resource]
 script = ExtResource("1_catalog")
-plant_variants = Array[ExtResource("2_variant")]([SubResource("PlantVariant_base_common"), SubResource("PlantVariant_blush_color"), SubResource("PlantVariant_leaf_cap"), SubResource("PlantVariant_tiny_gardener")])
+plant_variants = Array[ExtResource("2_variant")]([SubResource("PlantVariant_base_common"), SubResource("PlantVariant_leaf_cap"), SubResource("PlantVariant_moss_cushion"), SubResource("PlantVariant_moonbell"), SubResource("PlantVariant_blush_color"), SubResource("PlantVariant_tiny_gardener"), SubResource("PlantVariant_sunpatch"), SubResource("PlantVariant_rainbell"), SubResource("PlantVariant_fern_curl"), SubResource("PlantVariant_glow_pod")])
 jars = Array[ExtResource("3_jar")]([SubResource("Jar_default_glass"), SubResource("Jar_moss_glass")])
 environments = Array[ExtResource("4_environment")]([SubResource("Environment_forest"), SubResource("Environment_indoor_window"), SubResource("Environment_rainforest")])

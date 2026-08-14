@@ -1,0 +1,421 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Jar Garden 0.1\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "UI_STALL_KICKER"
+msgstr "YOUR GARDEN"
+
+msgid "UI_STALL_TITLE"
+msgstr "Garden Stall"
+
+msgid "UI_STALL_SUBTITLE"
+msgstr "Collect, trade, and shape your habitat."
+
+msgid "UI_CLOSE"
+msgstr "Close"
+
+msgid "UI_COLLECTION"
+msgstr "Collection"
+
+msgid "UI_MARKET"
+msgstr "Market"
+
+msgid "UI_CUSTOMIZE"
+msgstr "Customize"
+
+msgid "UI_BUY"
+msgstr "Buy"
+
+msgid "UI_SELL"
+msgstr "Sell"
+
+msgid "UI_JARS"
+msgstr "Jars"
+
+msgid "UI_PLACES"
+msgstr "Places"
+
+msgid "UI_WATER"
+msgstr "Water"
+
+msgid "UI_STALL"
+msgstr "Stall"
+
+msgid "UI_SAVE_TITLE"
+msgstr "Save needs attention"
+
+msgid "UI_SAVE_CLOSE"
+msgstr "Close Jar Garden"
+
+msgid "UI_SAVE_DEFAULT_MESSAGE"
+msgstr "Jar Garden preserved your save and locked this session."
+
+msgid "UI_UNKNOWN_VARIANT"
+msgstr "Unknown Variant"
+
+msgid "UI_UNDISCOVERED"
+msgstr "Undiscovered"
+
+msgid "UI_ACTIVE"
+msgstr "Active"
+
+msgid "UI_OWNED_USE"
+msgstr "Owned • Use"
+
+msgid "UI_JAR_FULL"
+msgstr "Jar full"
+
+msgid "UI_ECOLOGY_ANCHOR"
+msgstr "Ecology anchor"
+
+msgid "UI_PREVIEW_JAR"
+msgstr "JAR"
+
+msgid "UI_PREVIEW_PLACE"
+msgstr "PLACE"
+
+msgid "UI_PREVIEW_PLANT"
+msgstr "PLANT"
+
+msgid "UI_CARD_PLANT"
+msgstr "Plant"
+
+msgid "UI_CARD_PLANT_DETAILS"
+msgstr "Plant details"
+
+msgid "UI_CARD_ITEM"
+msgstr "Item"
+
+msgid "UI_CARD_ITEM_DETAILS"
+msgstr "Item details"
+
+msgid "UI_ACTION"
+msgstr "Action"
+
+msgid "UI_BUY_PRICE"
+msgstr "Buy • %d"
+
+msgid "UI_SELL_PRICE"
+msgstr "Sell • %d"
+
+msgid "UI_NEED_COINS"
+msgstr "Need %d"
+
+msgid "UI_SUMMARY_WIDE"
+msgstr "%d coins\n%d / %d plants"
+
+msgid "UI_SUMMARY_PLACEHOLDER"
+msgstr "0 coins\n0 / 0 plants"
+
+msgid "UI_SUMMARY_COMPACT"
+msgstr "%d coins  •  %d / %d plants"
+
+msgid "UI_HUD_COINS"
+msgstr "Coins %d"
+
+msgid "UI_HUD_CAPACITY"
+msgstr "%d / %d"
+
+msgid "UI_YOUNG_DISCOVERED"
+msgstr "Young plant • %s • Previously discovered"
+
+msgid "UI_CAPACITY_DESCRIPTION"
+msgstr "Capacity %d • %s"
+
+msgid "UI_ENVIRONMENT_DESCRIPTION"
+msgstr "%s • %s"
+
+msgid "UI_COLLECTION_DISCOVERED_DETAILS"
+msgstr "%s • %s\n%s"
+
+msgid "UI_COLLECTION_UNKNOWN_DETAILS"
+msgstr "Undiscovered • %s"
+
+msgid "UI_STALL_UNAVAILABLE"
+msgstr "Stall data\nunavailable"
+
+msgid "UI_STALL_NOT_READY"
+msgstr "The garden stall is not ready yet."
+
+msgid "UI_NO_VARIANTS"
+msgstr "No plant variants are configured."
+
+msgid "UI_NO_BUYABLE_PLANTS"
+msgstr "Discover a plant variant before buying its young form."
+
+msgid "UI_NO_SELLABLE_PLANTS"
+msgstr "There are no plants in the jar to sell."
+
+msgid "UI_NO_JARS"
+msgstr "No jars are configured."
+
+msgid "UI_NO_ENVIRONMENTS"
+msgstr "No environments are configured."
+
+msgid "UI_CARD_UNAVAILABLE"
+msgstr "Stall card presentation is unavailable."
+
+msgid "UI_MISSING_VARIANT"
+msgstr "%s • Missing variant data"
+
+msgid "WATER_DRY"
+msgstr "Dry"
+
+msgid "WATER_DAMP"
+msgstr "Damp"
+
+msgid "WATER_MOIST"
+msgstr "Moist"
+
+msgid "WATER_WET"
+msgstr "Wet"
+
+msgid "WATER_FULL"
+msgstr "Full"
+
+msgid "WATER_VERY_WET"
+msgstr "Wet"
+
+msgid "WATER_SUBMERGED"
+msgstr "Submerged"
+
+msgid "LIGHT_DAY"
+msgstr "Day"
+
+msgid "LIGHT_NIGHT"
+msgstr "Night"
+
+msgid "RARITY_COMMON"
+msgstr "Common"
+
+msgid "RARITY_UNCOMMON"
+msgstr "Uncommon"
+
+msgid "RARITY_RARE"
+msgstr "Rare"
+
+msgid "RARITY_VERY_RARE"
+msgstr "Very rare"
+
+msgid "STAGE_YOUNG"
+msgstr "Young"
+
+msgid "STAGE_ADULT"
+msgstr "Adult"
+
+msgid "STAGE_OLD"
+msgstr "Old"
+
+msgid "TOAST_NEW_DISCOVERY"
+msgstr "New discovery: %s"
+
+msgid "TOAST_AWAY_CHANGED"
+msgstr "The garden changed while you were away"
+
+msgid "TOAST_CATCHING_UP"
+msgstr "The garden is still catching up"
+
+msgid "TOAST_WATERED"
+msgstr "Water trickles into the jar"
+
+msgid "TOAST_STALL_UPDATED"
+msgstr "The Stall just updated — please tap again"
+
+msgid "TOAST_DISCOVER_FIRST"
+msgstr "Discover that blob before buying it"
+
+msgid "TOAST_JAR_FULL"
+msgstr "This jar is full"
+
+msgid "TOAST_NOT_ENOUGH_COINS"
+msgstr "Not enough coins"
+
+msgid "TOAST_PLANT_JOINED"
+msgstr "A young %s joined the jar"
+
+msgid "TOAST_SOLD"
+msgstr "Sold for %d coins"
+
+msgid "TOAST_ANCHOR_PROTECTED"
+msgstr "Ecology anchors keep the garden alive"
+
+msgid "TOAST_JAR_CAPACITY_BLOCKED"
+msgstr "Move or sell plants before using that jar"
+
+msgid "TOAST_USING_JAR"
+msgstr "Using %s"
+
+msgid "TOAST_MOVED_ENVIRONMENT"
+msgstr "Moved to %s"
+
+msgid "TOAST_NEW_PLANT"
+msgstr "A new young blob appeared"
+
+msgid "SAVE_LOAD_FAILED"
+msgstr "Your local save could not be loaded safely. Jar Garden preserved it and will not overwrite it. This session is locked so progress cannot be lost."
+
+msgid "SAVE_WRITE_FAILED"
+msgstr "Jar Garden could not safely save progress (error %d). Existing save data was preserved where possible, and this session is now locked."
+
+msgid "PLANT_BASE_COMMON_NAME"
+msgstr "Common Blob"
+
+msgid "PLANT_BASE_COMMON_DESCRIPTION"
+msgstr "A soft white dumpling friend with a calm little smile."
+
+msgid "PLANT_BASE_COMMON_HINT"
+msgstr "A patient little presence can appear almost anywhere."
+
+msgid "PLANT_BASE_COMMON_RECIPE"
+msgstr "Any place • Any moisture • Any light • Base result when no recipe matches"
+
+msgid "PLANT_LEAF_CAP_NAME"
+msgstr "Leaf-Cap"
+
+msgid "PLANT_LEAF_CAP_DESCRIPTION"
+msgstr "A pear-shaped forest blob wearing a fresh leaf cap."
+
+msgid "PLANT_LEAF_CAP_HINT"
+msgstr "In a bright forest, keep the soil softly moist."
+
+msgid "PLANT_LEAF_CAP_RECIPE"
+msgstr "Forest • Moist • Day • Natural spawn or reproduction"
+
+msgid "PLANT_MOSS_CUSHION_NAME"
+msgstr "Moss Cushion"
+
+msgid "PLANT_MOSS_CUSHION_DESCRIPTION"
+msgstr "A low, velvety cushion that looks happiest after rain."
+
+msgid "PLANT_MOSS_CUSHION_HINT"
+msgstr "A balanced forest day and generous water invite a soft carpet."
+
+msgid "PLANT_MOSS_CUSHION_RECIPE"
+msgstr "Forest • Wet • Balanced light • Natural spawn"
+
+msgid "PLANT_MOONBELL_NAME"
+msgstr "Moonbell"
+
+msgid "PLANT_MOONBELL_DESCRIPTION"
+msgstr "A silver-lilac bell shape that listens to moonlight."
+
+msgid "PLANT_MOONBELL_HINT"
+msgstr "Let two forest friends meet where moonlight outlasts the sun."
+
+msgid "PLANT_MOONBELL_RECIPE"
+msgstr "Forest • Moist • Night • Reproduction"
+
+msgid "PLANT_BLUSH_COLOR_NAME"
+msgstr "Blush Blob"
+
+msgid "PLANT_BLUSH_COLOR_DESCRIPTION"
+msgstr "A round coral-pink blob warmed by the window."
+
+msgid "PLANT_BLUSH_COLOR_HINT"
+msgstr "A sunny window and gentle moisture bring out a rosy glow."
+
+msgid "PLANT_BLUSH_COLOR_RECIPE"
+msgstr "Window Nook • Moist • Day • Natural spawn or reproduction"
+
+msgid "PLANT_TINY_GARDENER_NAME"
+msgstr "Tiny Gardener"
+
+msgid "PLANT_TINY_GARDENER_DESCRIPTION"
+msgstr "A squat helper with a sun hat and a very small watering can."
+
+msgid "PLANT_TINY_GARDENER_HINT"
+msgstr "A Common friend and a Blush friend may share a balanced window secret."
+
+msgid "PLANT_TINY_GARDENER_RECIPE"
+msgstr "Window Nook • Moist • Balanced light • Reproduction • Common + Blush parents"
+
+msgid "PLANT_SUNPATCH_NAME"
+msgstr "Sunpatch"
+
+msgid "PLANT_SUNPATCH_DESCRIPTION"
+msgstr "A tall golden bean that stores warm window light."
+
+msgid "PLANT_SUNPATCH_HINT"
+msgstr "Leave a bright window patch a little dry and see who reaches upward."
+
+msgid "PLANT_SUNPATCH_RECIPE"
+msgstr "Window Nook • Dry • Day • Natural spawn"
+
+msgid "PLANT_RAINBELL_NAME"
+msgstr "Rainbell"
+
+msgid "PLANT_RAINBELL_DESCRIPTION"
+msgstr "A clear blue bell-drop that feels at home below the waterline."
+
+msgid "PLANT_RAINBELL_HINT"
+msgstr "Deep rainforest water may ring a quiet blue bell."
+
+msgid "PLANT_RAINBELL_RECIPE"
+msgstr "Rainforest • Submerged • Any light • Natural spawn or reproduction"
+
+msgid "PLANT_FERN_CURL_NAME"
+msgstr "Fern Curl"
+
+msgid "PLANT_FERN_CURL_DESCRIPTION"
+msgstr "A lively green spiral unfurling toward rainforest daylight."
+
+msgid "PLANT_FERN_CURL_HINT"
+msgstr "Two rain-soaked friends may curl together beneath the daytime canopy."
+
+msgid "PLANT_FERN_CURL_RECIPE"
+msgstr "Rainforest • Wet • Day • Reproduction"
+
+msgid "PLANT_GLOW_POD_NAME"
+msgstr "Glow Pod"
+
+msgid "PLANT_GLOW_POD_DESCRIPTION"
+msgstr "A tall teal pod whose freckles glow under the rainforest moon."
+
+msgid "PLANT_GLOW_POD_HINT"
+msgstr "Keep the rainforest wet until night gathers into tiny lights."
+
+msgid "PLANT_GLOW_POD_RECIPE"
+msgstr "Rainforest • Wet • Night • Natural spawn"
+
+msgid "JAR_DEFAULT_GLASS_NAME"
+msgstr "Clear Glass Jar"
+
+msgid "JAR_DEFAULT_GLASS_DESCRIPTION"
+msgstr "A clear, roomy home with neutral ecology modifiers."
+
+msgid "JAR_MOSS_GLASS_NAME"
+msgstr "Moss-Tinted Jar"
+
+msgid "JAR_MOSS_GLASS_DESCRIPTION"
+msgstr "A larger moss-tinted jar that holds moisture a little longer."
+
+msgid "ENV_FOREST_NAME"
+msgstr "Forest"
+
+msgid "ENV_FOREST_DESCRIPTION"
+msgstr "A quiet woodland clearing with dappled light."
+
+msgid "ENV_FOREST_WEATHER"
+msgstr "Calm"
+
+msgid "ENV_INDOOR_WINDOW_NAME"
+msgstr "Window Nook"
+
+msgid "ENV_INDOOR_WINDOW_DESCRIPTION"
+msgstr "A sheltered sill wrapped in warm household light."
+
+msgid "ENV_INDOOR_WINDOW_WEATHER"
+msgstr "Sheltered"
+
+msgid "ENV_RAINFOREST_NAME"
+msgstr "Rainforest"
+
+msgid "ENV_RAINFOREST_DESCRIPTION"
+msgstr "A humid green canopy where water lingers."
+
+msgid "ENV_RAINFOREST_WEATHER"
+msgstr "Humid"

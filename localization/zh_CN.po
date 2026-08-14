@@ -1,0 +1,421 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Jar Garden 0.1\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "UI_STALL_KICKER"
+msgstr "你的花园"
+
+msgid "UI_STALL_TITLE"
+msgstr "花园小摊"
+
+msgid "UI_STALL_SUBTITLE"
+msgstr "收集、交换，并布置属于你的栖息地。"
+
+msgid "UI_CLOSE"
+msgstr "关闭"
+
+msgid "UI_COLLECTION"
+msgstr "图鉴"
+
+msgid "UI_MARKET"
+msgstr "市场"
+
+msgid "UI_CUSTOMIZE"
+msgstr "装扮"
+
+msgid "UI_BUY"
+msgstr "购买"
+
+msgid "UI_SELL"
+msgstr "出售"
+
+msgid "UI_JARS"
+msgstr "罐子"
+
+msgid "UI_PLACES"
+msgstr "场景"
+
+msgid "UI_WATER"
+msgstr "加水"
+
+msgid "UI_STALL"
+msgstr "小摊"
+
+msgid "UI_SAVE_TITLE"
+msgstr "存档需要处理"
+
+msgid "UI_SAVE_CLOSE"
+msgstr "关闭 Jar Garden"
+
+msgid "UI_SAVE_DEFAULT_MESSAGE"
+msgstr "Jar Garden 已保留原存档，并锁定了本次游戏。"
+
+msgid "UI_UNKNOWN_VARIANT"
+msgstr "未知品种"
+
+msgid "UI_UNDISCOVERED"
+msgstr "尚未发现"
+
+msgid "UI_ACTIVE"
+msgstr "使用中"
+
+msgid "UI_OWNED_USE"
+msgstr "已拥有 • 使用"
+
+msgid "UI_JAR_FULL"
+msgstr "罐子已满"
+
+msgid "UI_ECOLOGY_ANCHOR"
+msgstr "生态锚点"
+
+msgid "UI_PREVIEW_JAR"
+msgstr "罐子"
+
+msgid "UI_PREVIEW_PLACE"
+msgstr "场景"
+
+msgid "UI_PREVIEW_PLANT"
+msgstr "植物"
+
+msgid "UI_CARD_PLANT"
+msgstr "植物"
+
+msgid "UI_CARD_PLANT_DETAILS"
+msgstr "植物详情"
+
+msgid "UI_CARD_ITEM"
+msgstr "物品"
+
+msgid "UI_CARD_ITEM_DETAILS"
+msgstr "物品详情"
+
+msgid "UI_ACTION"
+msgstr "操作"
+
+msgid "UI_BUY_PRICE"
+msgstr "购买 • %d"
+
+msgid "UI_SELL_PRICE"
+msgstr "出售 • %d"
+
+msgid "UI_NEED_COINS"
+msgstr "还需 %d"
+
+msgid "UI_SUMMARY_WIDE"
+msgstr "%d 金币\n%d / %d 株"
+
+msgid "UI_SUMMARY_PLACEHOLDER"
+msgstr "0 金币\n0 / 0 株"
+
+msgid "UI_SUMMARY_COMPACT"
+msgstr "%d 金币  •  %d / %d 株"
+
+msgid "UI_HUD_COINS"
+msgstr "金币 %d"
+
+msgid "UI_HUD_CAPACITY"
+msgstr "%d / %d"
+
+msgid "UI_YOUNG_DISCOVERED"
+msgstr "幼年 • %s • 已发现"
+
+msgid "UI_CAPACITY_DESCRIPTION"
+msgstr "容量 %d • %s"
+
+msgid "UI_ENVIRONMENT_DESCRIPTION"
+msgstr "%s • %s"
+
+msgid "UI_COLLECTION_DISCOVERED_DETAILS"
+msgstr "%s • %s\n%s"
+
+msgid "UI_COLLECTION_UNKNOWN_DETAILS"
+msgstr "尚未发现 • %s"
+
+msgid "UI_STALL_UNAVAILABLE"
+msgstr "小摊数据\n暂不可用"
+
+msgid "UI_STALL_NOT_READY"
+msgstr "花园小摊还没有准备好。"
+
+msgid "UI_NO_VARIANTS"
+msgstr "尚未配置植物品种。"
+
+msgid "UI_NO_BUYABLE_PLANTS"
+msgstr "先发现一种植物，才能购买它的幼苗。"
+
+msgid "UI_NO_SELLABLE_PLANTS"
+msgstr "罐子里没有可以出售的植物。"
+
+msgid "UI_NO_JARS"
+msgstr "尚未配置罐子。"
+
+msgid "UI_NO_ENVIRONMENTS"
+msgstr "尚未配置场景。"
+
+msgid "UI_CARD_UNAVAILABLE"
+msgstr "小摊卡片暂不可用。"
+
+msgid "UI_MISSING_VARIANT"
+msgstr "%s • 缺少品种数据"
+
+msgid "WATER_DRY"
+msgstr "干燥"
+
+msgid "WATER_DAMP"
+msgstr "微湿"
+
+msgid "WATER_MOIST"
+msgstr "湿润"
+
+msgid "WATER_WET"
+msgstr "充足"
+
+msgid "WATER_FULL"
+msgstr "满水"
+
+msgid "WATER_VERY_WET"
+msgstr "充足"
+
+msgid "WATER_SUBMERGED"
+msgstr "浸没"
+
+msgid "LIGHT_DAY"
+msgstr "白天"
+
+msgid "LIGHT_NIGHT"
+msgstr "夜晚"
+
+msgid "RARITY_COMMON"
+msgstr "常见"
+
+msgid "RARITY_UNCOMMON"
+msgstr "少见"
+
+msgid "RARITY_RARE"
+msgstr "稀有"
+
+msgid "RARITY_VERY_RARE"
+msgstr "极稀有"
+
+msgid "STAGE_YOUNG"
+msgstr "幼年"
+
+msgid "STAGE_ADULT"
+msgstr "成年"
+
+msgid "STAGE_OLD"
+msgstr "老年"
+
+msgid "TOAST_NEW_DISCOVERY"
+msgstr "发现新品种：%s"
+
+msgid "TOAST_AWAY_CHANGED"
+msgstr "离开期间，花园悄悄发生了变化"
+
+msgid "TOAST_CATCHING_UP"
+msgstr "花园还在补算离线时间"
+
+msgid "TOAST_WATERED"
+msgstr "清水正流进罐子"
+
+msgid "TOAST_STALL_UPDATED"
+msgstr "小摊刚刚更新，请再点一次"
+
+msgid "TOAST_DISCOVER_FIRST"
+msgstr "先发现这个品种，才能购买"
+
+msgid "TOAST_JAR_FULL"
+msgstr "这个罐子已经满了"
+
+msgid "TOAST_NOT_ENOUGH_COINS"
+msgstr "金币不足"
+
+msgid "TOAST_PLANT_JOINED"
+msgstr "一株幼年%s住进了罐子"
+
+msgid "TOAST_SOLD"
+msgstr "卖出了 %d 金币"
+
+msgid "TOAST_ANCHOR_PROTECTED"
+msgstr "生态锚点会守住花园的生命"
+
+msgid "TOAST_JAR_CAPACITY_BLOCKED"
+msgstr "请先移动或出售植物，再更换这个罐子"
+
+msgid "TOAST_USING_JAR"
+msgstr "正在使用%s"
+
+msgid "TOAST_MOVED_ENVIRONMENT"
+msgstr "已搬到%s"
+
+msgid "TOAST_NEW_PLANT"
+msgstr "一株新的小植物出现了"
+
+msgid "SAVE_LOAD_FAILED"
+msgstr "本地存档无法安全读取。Jar Garden 已保留原文件且不会覆盖它；本次游戏已锁定，以免进度丢失。"
+
+msgid "SAVE_WRITE_FAILED"
+msgstr "Jar Garden 无法安全保存进度（错误 %d）。现有存档已尽可能保留，本次游戏现已锁定。"
+
+msgid "PLANT_BASE_COMMON_NAME"
+msgstr "普通团子"
+
+msgid "PLANT_BASE_COMMON_DESCRIPTION"
+msgstr "柔软洁白、带着安静微笑的团子朋友。"
+
+msgid "PLANT_BASE_COMMON_HINT"
+msgstr "耐心陪伴，几乎在任何地方都可能遇见它。"
+
+msgid "PLANT_BASE_COMMON_RECIPE"
+msgstr "任意场景 • 任意水分 • 任意光照 • 无配方匹配时的基础结果"
+
+msgid "PLANT_LEAF_CAP_NAME"
+msgstr "叶帽"
+
+msgid "PLANT_LEAF_CAP_DESCRIPTION"
+msgstr "梨形的森林团子，戴着一顶新鲜叶帽。"
+
+msgid "PLANT_LEAF_CAP_HINT"
+msgstr "在明亮的森林里，让水分保持柔和湿润。"
+
+msgid "PLANT_LEAF_CAP_RECIPE"
+msgstr "森林 • 湿润 • 白天 • 自然生成或繁殖"
+
+msgid "PLANT_MOSS_CUSHION_NAME"
+msgstr "苔藓软垫"
+
+msgid "PLANT_MOSS_CUSHION_DESCRIPTION"
+msgstr "低矮柔软的小垫子，在雨后最开心。"
+
+msgid "PLANT_MOSS_CUSHION_HINT"
+msgstr "均衡的森林光线与充足水分，会请来一片柔软。"
+
+msgid "PLANT_MOSS_CUSHION_RECIPE"
+msgstr "森林 • 充足水分 • 均衡光照 • 自然生成"
+
+msgid "PLANT_MOONBELL_NAME"
+msgstr "月铃"
+
+msgid "PLANT_MOONBELL_DESCRIPTION"
+msgstr "会静静聆听月光的银紫色铃滴。"
+
+msgid "PLANT_MOONBELL_HINT"
+msgstr "让两位森林朋友在月光长于日光时相遇。"
+
+msgid "PLANT_MOONBELL_RECIPE"
+msgstr "森林 • 湿润 • 夜晚 • 繁殖"
+
+msgid "PLANT_BLUSH_COLOR_NAME"
+msgstr "绯红团子"
+
+msgid "PLANT_BLUSH_COLOR_DESCRIPTION"
+msgstr "被窗边暖意染成珊瑚粉的圆团子。"
+
+msgid "PLANT_BLUSH_COLOR_HINT"
+msgstr "晴朗窗边与温柔水分，会唤醒它的红晕。"
+
+msgid "PLANT_BLUSH_COLOR_RECIPE"
+msgstr "窗边角落 • 湿润 • 白天 • 自然生成或繁殖"
+
+msgid "PLANT_TINY_GARDENER_NAME"
+msgstr "迷你园丁"
+
+msgid "PLANT_TINY_GARDENER_DESCRIPTION"
+msgstr "戴着遮阳帽、拿着迷你水壶的矮豆小帮手。"
+
+msgid "PLANT_TINY_GARDENER_HINT"
+msgstr "普通团子与绯红团子，也许会分享一个均衡的窗边秘密。"
+
+msgid "PLANT_TINY_GARDENER_RECIPE"
+msgstr "窗边角落 • 湿润 • 均衡光照 • 繁殖 • 普通团子 + 绯红团子亲本"
+
+msgid "PLANT_SUNPATCH_NAME"
+msgstr "日光斑"
+
+msgid "PLANT_SUNPATCH_DESCRIPTION"
+msgstr "把窗边暖光收藏起来的高挑金色豆荚。"
+
+msgid "PLANT_SUNPATCH_HINT"
+msgstr "让明亮的窗边稍微干一点，看看谁会向上伸展。"
+
+msgid "PLANT_SUNPATCH_RECIPE"
+msgstr "窗边角落 • 干燥 • 白天 • 自然生成"
+
+msgid "PLANT_RAINBELL_NAME"
+msgstr "雨铃"
+
+msgid "PLANT_RAINBELL_DESCRIPTION"
+msgstr "在水线以下也很自在的清蓝色铃滴。"
+
+msgid "PLANT_RAINBELL_HINT"
+msgstr "雨林深水里，也许会响起一声安静的蓝铃。"
+
+msgid "PLANT_RAINBELL_RECIPE"
+msgstr "雨林 • 浸没 • 任意光照 • 自然生成或繁殖"
+
+msgid "PLANT_FERN_CURL_NAME"
+msgstr "蕨卷"
+
+msgid "PLANT_FERN_CURL_DESCRIPTION"
+msgstr "朝着雨林日光舒展的活泼绿色螺旋。"
+
+msgid "PLANT_FERN_CURL_HINT"
+msgstr "两位被雨水浸润的朋友，也许会在白昼树冠下卷在一起。"
+
+msgid "PLANT_FERN_CURL_RECIPE"
+msgstr "雨林 • 充足水分 • 白天 • 繁殖"
+
+msgid "PLANT_GLOW_POD_NAME"
+msgstr "微光荚"
+
+msgid "PLANT_GLOW_POD_DESCRIPTION"
+msgstr "月下斑点会发光的高挑青绿色豆荚。"
+
+msgid "PLANT_GLOW_POD_HINT"
+msgstr "让雨林保持湿润，直到夜色聚成细小光点。"
+
+msgid "PLANT_GLOW_POD_RECIPE"
+msgstr "雨林 • 充足水分 • 夜晚 • 自然生成"
+
+msgid "JAR_DEFAULT_GLASS_NAME"
+msgstr "透明玻璃罐"
+
+msgid "JAR_DEFAULT_GLASS_DESCRIPTION"
+msgstr "宽敞通透、生态修正中性的家。"
+
+msgid "JAR_MOSS_GLASS_NAME"
+msgstr "苔色玻璃罐"
+
+msgid "JAR_MOSS_GLASS_DESCRIPTION"
+msgstr "容量更大的苔色罐子，能让湿润多停留一会儿。"
+
+msgid "ENV_FOREST_NAME"
+msgstr "森林"
+
+msgid "ENV_FOREST_DESCRIPTION"
+msgstr "洒着斑驳光线的安静林间空地。"
+
+msgid "ENV_FOREST_WEATHER"
+msgstr "宁静"
+
+msgid "ENV_INDOOR_WINDOW_NAME"
+msgstr "窗边角落"
+
+msgid "ENV_INDOOR_WINDOW_DESCRIPTION"
+msgstr "被温暖室内光包裹的安稳窗台。"
+
+msgid "ENV_INDOOR_WINDOW_WEATHER"
+msgstr "避风"
+
+msgid "ENV_RAINFOREST_NAME"
+msgstr "雨林"
+
+msgid "ENV_RAINFOREST_DESCRIPTION"
+msgstr "水汽久久停留的湿润绿色树冠。"
+
+msgid "ENV_RAINFOREST_WEATHER"
+msgstr "潮湿"

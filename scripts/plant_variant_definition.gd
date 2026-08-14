@@ -3,13 +3,23 @@ extends Resource
 
 
 ## Static content for one visually distinct plant variant.
-## All prototype catalog values and selectors remain replaceable/TBD.
+## Legacy selectors remain available while catalog entries migrate to layered
+## PlantVisualDefinition resources.
 @export var id: StringName = &""
 @export var display_name: String = ""
 @export_multiline var description: String = ""
+@export var display_name_key: StringName = &""
+@export var description_key: StringName = &""
 @export var rarity: StringName = &"common"
 
+@export_group("Discovery Text Keys")
+## Translation keys, not player-facing copy. The collection can show a poetic
+## clue before discovery and the exact recipe after discovery.
+@export var undiscovered_hint_key: StringName = &""
+@export var discovered_recipe_key: StringName = &""
+
 @export_group("Prototype Visuals (TBD)")
+@export var visual: PlantVisualDefinition
 @export var body_color: Color = Color(0.985, 0.985, 0.97, 1.0)
 @export var head_accessory: StringName = &"none"
 @export var equipment: StringName = &"none"
