@@ -1,0 +1,10 @@
+# Standalone SceneTree test entrypoints, one res:// path per line.
+# tools/validate.ps1 and tools/validate.sh both consume this file in order.
+res://tests/content_asset_tests.gd
+res://tests/environment_provider_tests.gd
+res://tests/phase2_tests.gd
+res://tests/mvp_simulation_tests.gd
+res://tests/plant_visual_tests.gd
+res://tests/main_integration_tests.gd
+res://tests/main_visual_tests.gd
+res://tests/stall_ui_tests.gd
