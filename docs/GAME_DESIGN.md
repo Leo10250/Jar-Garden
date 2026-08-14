@@ -1,5 +1,13 @@
 # Jar Garden — Game Design
 
+## Document Role
+
+This document is the **normative product/design source of truth**: it describes what Jar Garden should feel like and the player-facing rules/direction that implementations should preserve.
+
+It is **not** an implementation-status document. For what exists in code today, use `ARCHITECTURE.md`; for what is completed or next, use `MVP_PLAN.md`; for slow-changing platform constraints, use `PROJECT_CONTEXT.md`.
+
+Values marked TBD remain product decisions even when `prototype_mvp_tuning.tres` or `prototype_content_catalog.tres` contains working prototype values. Prototype Resources are executable balancing inputs, not automatic permanent design commitments.
+
 ## 1. High-Level Concept
 
 Jar Garden is a **collection + nurturing + relaxing/healing** game.
