@@ -18,6 +18,7 @@ Always read this file first. Then route to the smallest relevant source of truth
 - Current milestone status and remaining roadmap → `docs/MVP_PLAN.md`
 - Art provenance, generation prompts, dimensions, preparation → `assets/ART_ASSET_MANIFEST.md`
 - Executable validation contract → `tools/validate.ps1` or `tools/validate.sh`
+- Canonical standalone test inventory → `tools/test_suites.txt`
 
 Do **not** reread every long document for every small task. Inspect the relevant code, scene, resource, and tests directly.
 
@@ -80,6 +81,7 @@ Never preserve stale documentation merely because it calls itself a source of tr
 ├── tests/
 └── tools/
     ├── prepare_ai_assets.gd
+    ├── test_suites.txt
     ├── validate.ps1
     └── validate.sh
 ```
@@ -149,7 +151,8 @@ When adding a durable invariant:
 
 1. Put the rule in the correct data/code boundary.
 2. Add or update the narrowest relevant automated test.
-3. Document it only where a human/agent needs intent or ownership context.
+3. Add a new standalone suite to `tools/test_suites.txt` if it should run in the full validation loop.
+4. Document the rule only where a human/agent needs intent or ownership context.
 
 ## Workflow Before Editing
 
@@ -174,14 +177,14 @@ For Windows PowerShell:
 For macOS/Linux:
 
 ```bash
-./tools/validate.sh
+bash ./tools/validate.sh
 ```
 
 Both wrappers implement the same contract:
 
 1. Resolve Godot from `GODOT_BIN`, then PATH fallbacks.
 2. Import/parse the project headlessly.
-3. Run every repository test suite in deterministic order.
+3. Read the shared `tools/test_suites.txt` inventory and run every listed standalone suite in order.
 4. Smoke-run the configured main scene headlessly.
 5. Return nonzero on any failure and print a concise PASS/FAIL summary.
 
