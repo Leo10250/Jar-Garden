@@ -1,340 +1,164 @@
-# Jar Garden — Project Context
+# Jar Garden — Stable Project Context
 
-## 1. Project Summary
+## Purpose
 
-**Jar Garden** is a small 2D mobile game for iOS and Android.
+This document contains **slow-changing project constraints and product context**. It intentionally avoids current folder snapshots, implementation status, and milestone completion details because those become stale quickly.
 
-It is a **collection + nurturing + relaxing/healing** game centered on cute plant-like creatures living inside a glass jar.
+For current implementation ownership and data flow, read `docs/ARCHITECTURE.md`.
+For current roadmap/status, read `docs/MVP_PLAN.md`.
+For normative game behavior and product intent, read `docs/GAME_DESIGN.md`.
 
-The developers are two experienced software engineers. Codex is expected to be used heavily for:
+## Product Summary
 
-- GDScript implementation
-- Godot scene generation
-- UI generation
-- node-tree creation
-- resource wiring
-- refactoring
-- debugging
-- local persistence
-- validation/testing where practical
+Jar Garden is a relaxing 2D mobile collection and nurturing game for iOS and Android.
 
-The project should remain text-friendly, Git-friendly, readable, and easy for an agent to inspect and modify.
+The player cares for cute plant-like creatures living inside a glass jar. The experience is intentionally low pressure and centered on observation, care, waiting, growth, reproduction, environmental spawning, visible mutation, discovery, and collection.
 
-## 2. Current Technology Choices
+The core emotional promise is that actions taken earlier can produce a cute or surprising change when the player returns later.
 
-Confirmed:
+## Stable Technology Choices
 
-- Engine: **Godot 4.7.1 stable**
-- Renderer: **Mobile**
-- Language: **GDScript**
-- Version control: **Git**
-- Development environment currently includes Windows and VS Code
-- Targets: **iOS + Android**
-- Presentation: **2D**
-- Orientation: **Portrait**
-- Game type: **single-player**
-- Core game should work offline
+- Engine: Godot 4.7.x.
+- Renderer: Mobile.
+- Language: GDScript.
+- Presentation: 2D.
+- Target platforms: iOS and Android.
+- Orientation: portrait.
+- Version control: Git.
+- Core experience: single-player and offline-first.
 
-Do not switch engine, renderer, or scripting language unless explicitly requested.
+Do not switch engine, renderer, language, or core platform model without an explicit product/technical decision.
 
-## 3. Current Repository State
+## Creature Identity
 
-The project is newly created and intentionally minimal.
+The collectible creatures are called plants, but they are stylized creatures rather than realistic botanical plants.
 
-Known structure:
+The common/base creature is a small soft white dumpling/blob with a cute face. It should feel friendly, simple, collectible, and calming.
 
-```text
-JAR-GARDEN/
-├── .godot/                 # generated Godot cache; do not edit
-├── assets/
-├── scenes/
-│   └── main.tscn
-├── scripts/
-├── .editorconfig
-├── .gitattributes
-├── .gitignore
-├── AGENTS.md
-├── icon.svg
-├── icon.svg.import
-└── project.godot
-```
+Variants may visibly differ through:
 
-Important:
-- `scenes/main.tscn` already exists.
-- Inspect it before assuming its root node/type.
-- `assets/` and `scripts/` are intentionally mostly empty.
-- Do not add speculative architecture.
+- silhouette,
+- color,
+- decorations,
+- headwear,
+- equipment-like accessories,
+- or combinations of those traits.
 
-## 4. Core Visual Identity
+Visible differentiation is an important discovery reward. Do not reinterpret the common creature as a conventional flower, seedling, or realistic plant.
 
-The central collectible creatures are called plants, but they are **stylized plant-like creatures rather than realistic plants**.
+The repository contains a production-prototype art set, but individual final production choices can still evolve. Art provenance and preparation rules belong in `assets/ART_ASSET_MANIFEST.md`.
 
-### Confirmed base/common plant appearance
+## Core Screen and Interaction Model
 
-The basic plant should look like:
+The game is portrait-first and centered on one primary jar screen. The glass jar and creatures inside it are the visual focus, with environmental presentation behind/around the jar and primary actions such as Water and Stall exposed through mobile-safe UI.
 
-- a small **white dumpling/blob**
-- soft, round, simple silhouette
-- a **cute face / cute expression**
-- friendly, healing, collectible feeling
+Primary input is touch. Mouse input should remain useful for desktop development where practical.
 
-The five starting plants use this same basic/common visual identity.
+Important interaction principles:
 
-### Mutation / variant appearance
+- plants can be positioned/dragged inside the jar,
+- watering should have visible and simulated consequences,
+- the Stall/collection flow should expose discovery and economy without turning the game into a high-pressure menu loop,
+- UI must adapt to phone aspect ratios and safe areas.
 
-Mutations should visibly differentiate plants.
+The project uses a 720x1280 portrait reference viewport, but implementations must remain responsive rather than assuming one physical screen size.
 
-Confirmed directions include:
-- different **colors**
-- different **decorations/accessories**
-- possible **headwear**
-- possible **equipment-like accessories**
-- combinations of multiple visible traits
+## Offline Progression and Time
 
-The mutation system should make a player immediately feel:
+Jar Garden progresses while closed.
 
-> “This one looks different. I discovered something new.”
+The stable model is:
 
-The exact designs, colors, accessory catalog, silhouettes, and art style remain TBD.
+1. Persist the state and simulation checkpoint needed for deterministic continuation.
+2. On load/resume, calculate real elapsed time.
+3. Advance implemented simulation systems.
+4. Persist the resulting state locally.
 
-Do not replace this direction with realistic flowers/leaves/seedlings.
+No anti-cheat or clock-tampering system is required for the MVP unless explicitly requested.
 
-## 5. Intended Main Screen
+Online/offline equivalence and deterministic catch-up are important engineering invariants.
 
-The core game takes place on one main screen.
+## Water Model
 
-Conceptually:
+Water is spatially meaningful but intentionally lightweight.
 
-```text
-Forest / environment background
-        |
-        | sunlight / moonlight / weather
-        v
+Stable constraints:
 
-      [ GLASS JAR ]
-      [            ]
-      [ cute white ]
-      [ blob plants]
-      [            ]
-      [   water    ]
+- the player manually adds water,
+- watering can affect plants differently based on position,
+- repeated watering accumulates water/wetness,
+- water changes over real elapsed time,
+- partial and full submersion can matter,
+- presentation should make the water state understandable,
+- do not implement realistic fluid physics unless the product direction explicitly changes.
 
-[Water button]                 [Stall button]
-```
+Exact rates and balance values are prototype tuning and should remain data-driven/configurable.
 
-This is conceptual, not a locked final composition.
+## Light and Environment Model
 
-The glass jar and the creatures inside it are the visual focus.
+Sunlight and moonlight can affect spawning, reproduction, mutation, and cultivation history. The implementation may use device/local time without requiring a network service.
 
-## 6. Mobile Layout
+Selectable environments can affect presentation and prototype simulation modifiers.
 
-Portrait-first.
+Long-term real-world weather remains a possible future feature. Do not introduce weather APIs, location permissions, backend services, or networking merely because the design mentions weather.
 
-A logical reference resolution such as **720 x 1280** is acceptable if the project is not already configured differently.
+## Content/Data Direction
 
-This is not an art-resolution commitment.
+The project favors data-driven content over hard-coded branching when a value or content definition is expected to change.
 
-The implementation must adapt to different phone aspect ratios.
+Stable concepts include:
 
-Use anchors/containers where appropriate.
+- static plant/variant definitions,
+- per-instance runtime plant state,
+- selectable jar definitions,
+- selectable environment definitions,
+- centralized prototype tuning,
+- stable content IDs for persistence and lookup.
 
-## 7. Interaction Model
+Do not build a complex genetics taxonomy or trait-inheritance engine without a concrete requirement. Visible mutation outcomes can remain explicit data-driven variants.
 
-Primary input:
-- touch
+## Localization
 
-Desktop-development fallback:
-- mouse
+The project has an active localization path. English is the fallback language and Simplified Chinese resources are registered.
 
-Important planned interactions:
-- drag individual plants inside the jar
-- press Water to add water
-- press Stall to open the economy/shop interface
+Player-facing strings should use translation keys rather than being embedded as permanent English prose in gameplay logic.
 
-Exact gestures and animations are TBD.
+## Performance and Complexity
 
-## 8. Offline-First and Weather
+This is a small 2D mobile game. Favor clarity, determinism, and inspectability over speculative optimization.
 
-Long-term, the game may reflect real-world weather.
+Avoid:
 
-However:
-- real online weather integration is **not part of the initial MVP**
-- do not add HTTP/weather APIs early
-- sun/moon can use device time
-- weather-dependent systems should remain separable from the eventual weather data source
-- MVP weather can be simulated, hard-coded for testing, or omitted depending on the task
+- unnecessary per-frame work for slow simulation,
+- per-second loops for long offline intervals when exact/event-based math is practical,
+- unnecessary physics for purely visual effects,
+- speculative ECS/manager/service architectures,
+- dependencies that make local/offline behavior harder to reason about.
 
-Exact future weather source is TBD.
-
-## 9. Data Model Direction
-
-Avoid a complex genetics engine.
-
-A simple separation is preferred.
-
-### Static plant/variant definition
-
-May eventually contain:
-- stable ID
-- display name
-- rarity
-- base visual configuration
-- color/visual-trait configuration
-- accessory/decor configuration
-- adult sale value
-- reproduction modifiers if needed later
-- discovery metadata
-
-A Godot `Resource`-based definition is reasonable.
-
-### Runtime plant instance
-
-May eventually contain:
-- unique instance ID
-- plant/variant definition reference
-- lifecycle stage
-- birth timestamp
-- current position
-- reproduction count used
-- hydration/environment history needed by current mechanics
-- mutation-related state if required
-- parent information only if actually needed
-
-Do not implement all fields prematurely.
-
-### Visual-trait note
-
-The final distinction between:
-- “species”
-- “mutation”
-- “variant”
-- “visual trait”
-
-is not fully finalized.
-
-Do not build a complicated inheritance/genetics taxonomy yet.
-
-For now, treat visible mutation results as data-driven variants that can alter color and add/remove visual decorations.
-
-## 10. Time Model
-
-The game continues progressing while closed.
-
-General model:
-
-1. Store relevant timestamp/state.
-2. On load/resume, calculate elapsed real time.
-3. Advance implemented systems.
-4. Save locally.
-
-Exact durations are TBD and should be configurable.
-
-No clock-tampering protection is required for MVP.
-
-## 11. Water Model Direction
-
-Water is spatially meaningful.
-
-Confirmed:
-- player adds water manually from the top of the jar
-- different plant positions may receive different water amounts
-- player can water multiple times
-- jar can become increasingly wet and even effectively submerged
-- water decreases over real-world time
-
-Do not build realistic fluid simulation.
-
-Use the simplest understandable model that satisfies the current task.
-
-## 12. Light Model Direction
-
-Sunlight/moonlight affect the jar broadly rather than requiring detailed per-plant shadows.
-
-Light may affect:
-- growth
-- spawning
-- reproduction
-- mutation
-
-Exact sunlight-vs-moonlight differences are TBD.
-
-## 13. Scene Architecture Direction
-
-Keep it simple.
-
-A future main scene may evolve toward:
-
-```text
-Main
-├── Background
-├── Environment
-├── Jar
-│   ├── Water
-│   └── Plants
-└── UI
-    ├── WaterButton
-    └── StallButton
-```
-
-This is guidance, not a mandatory exact tree.
-
-Reusable plant presentation/interaction can become its own scene when useful.
-
-Avoid many singleton managers.
-
-## 14. Art and Audio
-
-The **broad plant visual direction is now partially confirmed**:
-
-- common/base = white cute blob/dumpling with face
-- mutations = visible color/accessory/decor changes
-
-Still TBD:
-- exact silhouette
-- exact facial expressions
-- exact colors
-- exact accessories/headwear/equipment
-- animation style
-- final background style
-- final UI style
-- fonts
-- audio direction
-
-During prototyping:
-- use simple replaceable shapes/assets
-- preserve the confirmed white-blob-with-face concept
-- mutation placeholders may use simple color changes and small icon-like accessories
-- do not treat placeholder choices as final art
-
-Do not download third-party art/audio without approval.
-
-## 15. Localization
-
-Localization requirements are TBD.
-
-Avoid embedding large amounts of permanent player-facing text directly into gameplay logic.
-
-## 16. Performance
-
-This is a small 2D mobile game.
-
-Favor clarity over premature optimization.
-
-Avoid obvious waste:
-- expensive per-frame logic for slow simulation
-- unnecessary physics for purely visual elements
-- overly complex architecture
-
-Do not introduce ECS without a demonstrated need.
-
-## 17. Services Not Currently Part of the Project
+## Services Outside the Current Scope
 
 Do not add without explicit instruction:
 
-- accounts
-- backend
-- multiplayer
-- cloud save
-- ads
-- IAP
-- analytics
-- social features
+- accounts,
+- backend services,
+- multiplayer,
+- cloud saves,
+- ads,
+- IAP,
+- analytics,
+- social systems,
+- push-notification retention mechanics,
+- third-party runtime networking dependencies.
+
+## AI-Friendly Repository Principle
+
+Jar Garden is intentionally designed so humans and coding agents can reason about it from repository state:
+
+- product intent is documented separately from implementation status,
+- content and balance are represented in Resources,
+- elapsed-time simulation is deterministic and directly testable,
+- persistence has explicit schema/migration behavior,
+- art generation has recorded provenance and deterministic preparation,
+- durable invariants should become executable tests/validation rather than duplicated prose.
+
+When a mutable implementation fact changes, update its owning architecture/status document instead of adding that fact here.
