@@ -1,3 +1,374 @@
-[gd_scene format=3 uid="uid://b43f17faj48q1"]
+[gd_scene load_steps=13 format=3 uid="uid://b43f17faj48q1"]
 
-[node name="Main" type="Node2D" unique_id=1837929902]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/plant.tscn" id="2_plant"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_foliage_far"]
+bg_color = Color(0.31, 0.53, 0.39, 1)
+corner_radius_top_left = 180
+corner_radius_top_right = 180
+corner_radius_bottom_right = 180
+corner_radius_bottom_left = 180
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_foliage_near"]
+bg_color = Color(0.20, 0.42, 0.31, 1)
+corner_radius_top_left = 220
+corner_radius_top_right = 220
+corner_radius_bottom_right = 220
+corner_radius_bottom_left = 220
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sun"]
+bg_color = Color(1, 0.86, 0.45, 1)
+corner_radius_top_left = 64
+corner_radius_top_right = 64
+corner_radius_bottom_right = 64
+corner_radius_bottom_left = 64
+shadow_color = Color(1, 0.78, 0.31, 0.25)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glass_back"]
+bg_color = Color(0.78, 0.93, 0.96, 0.24)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.83, 0.96, 0.98, 0.62)
+corner_radius_top_left = 44
+corner_radius_top_right = 44
+corner_radius_bottom_right = 104
+corner_radius_bottom_left = 104
+shadow_color = Color(0.05, 0.16, 0.13, 0.28)
+shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glass_outline"]
+bg_color = Color(0.82, 0.95, 0.98, 0.04)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.89, 0.98, 1, 0.82)
+corner_radius_top_left = 44
+corner_radius_top_right = 44
+corner_radius_bottom_right = 104
+corner_radius_bottom_left = 104
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jar_rim"]
+bg_color = Color(0.78, 0.93, 0.96, 0.32)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0.91, 0.99, 1, 0.9)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_water_button"]
+bg_color = Color(0.45, 0.73, 0.82, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+shadow_color = Color(0.06, 0.19, 0.22, 0.28)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stall_button"]
+bg_color = Color(0.87, 0.72, 0.48, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+shadow_color = Color(0.18, 0.12, 0.05, 0.25)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+bg_color = Color(0.92, 0.9, 0.72, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+shadow_color = Color(0.1, 0.15, 0.11, 0.2)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+bg_color = Color(0.60, 0.68, 0.56, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="ForestBackdrop" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Sky" type="ColorRect" parent="ForestBackdrop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.58, 0.76, 0.69, 1)
+
+[node name="Mist" type="ColorRect" parent="ForestBackdrop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.89, 0.94, 0.82, 0.2)
+
+[node name="DistantFoliage" type="Control" parent="ForestBackdrop"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="CanopyTop" type="Panel" parent="ForestBackdrop/DistantFoliage"]
+layout_mode = 1
+anchor_left = -0.12
+anchor_top = -0.14
+anchor_right = 1.12
+anchor_bottom = 0.18
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_foliage_far")
+
+[node name="CrownLeft" type="Panel" parent="ForestBackdrop/DistantFoliage"]
+layout_mode = 1
+anchor_left = -0.2
+anchor_top = 0.08
+anchor_right = 0.32
+anchor_bottom = 0.46
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_foliage_near")
+
+[node name="CrownRight" type="Panel" parent="ForestBackdrop/DistantFoliage"]
+layout_mode = 1
+anchor_left = 0.68
+anchor_top = 0.06
+anchor_right = 1.2
+anchor_bottom = 0.44
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_foliage_near")
+
+[node name="LeftTree" type="ColorRect" parent="ForestBackdrop"]
+layout_mode = 1
+anchor_top = 0.25
+anchor_right = 0.105
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.25, 0.26, 0.17, 1)
+
+[node name="RightTree" type="ColorRect" parent="ForestBackdrop"]
+layout_mode = 1
+anchor_left = 0.895
+anchor_top = 0.23
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.25, 0.26, 0.17, 1)
+
+[node name="Ground" type="ColorRect" parent="ForestBackdrop"]
+layout_mode = 1
+anchor_top = 0.76
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.24, 0.43, 0.29, 1)
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="GameArea" type="Control" parent="SafeArea"]
+layout_mode = 2
+mouse_filter = 1
+
+[node name="SunSlot" type="CenterContainer" parent="SafeArea/GameArea"]
+layout_mode = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -120.0
+offset_top = 4.0
+offset_right = -8.0
+offset_bottom = 116.0
+grow_horizontal = 0
+mouse_filter = 2
+
+[node name="SunMoon" type="Panel" parent="SafeArea/GameArea/SunSlot"]
+custom_minimum_size = Vector2(96, 96)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_sun")
+
+[node name="JarSlot" type="AspectRatioContainer" parent="SafeArea/GameArea"]
+layout_mode = 1
+anchor_top = 0.06
+anchor_right = 1.0
+anchor_bottom = 0.86
+mouse_filter = 1
+ratio = 0.68
+stretch_mode = 2
+
+[node name="Jar" type="Control" parent="SafeArea/GameArea/JarSlot"]
+layout_mode = 2
+mouse_filter = 1
+
+[node name="GlassBack" type="Panel" parent="SafeArea/GameArea/JarSlot/Jar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_glass_back")
+
+[node name="PlantBounds" type="Control" parent="SafeArea/GameArea/JarSlot/Jar"]
+clip_contents = true
+layout_mode = 1
+anchor_left = 0.09
+anchor_top = 0.12
+anchor_right = 0.91
+anchor_bottom = 0.93
+mouse_filter = 1
+
+[node name="Plant01" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
+layout_mode = 0
+anchor_left = 0.07
+anchor_top = 0.44
+anchor_right = 0.07
+anchor_bottom = 0.44
+offset_right = 96.0
+offset_bottom = 88.0
+
+[node name="Plant02" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
+layout_mode = 0
+anchor_left = 0.36
+anchor_top = 0.57
+anchor_right = 0.36
+anchor_bottom = 0.57
+offset_right = 96.0
+offset_bottom = 88.0
+
+[node name="Plant03" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
+layout_mode = 0
+anchor_left = 0.68
+anchor_top = 0.43
+anchor_right = 0.68
+anchor_bottom = 0.43
+offset_right = 96.0
+offset_bottom = 88.0
+
+[node name="Plant04" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
+layout_mode = 0
+anchor_left = 0.2
+anchor_top = 0.73
+anchor_right = 0.2
+anchor_bottom = 0.73
+offset_right = 96.0
+offset_bottom = 88.0
+
+[node name="Plant05" parent="SafeArea/GameArea/JarSlot/Jar/PlantBounds" instance=ExtResource("2_plant")]
+layout_mode = 0
+anchor_left = 0.58
+anchor_top = 0.72
+anchor_right = 0.58
+anchor_bottom = 0.72
+offset_right = 96.0
+offset_bottom = 88.0
+
+[node name="GlassHighlight" type="ColorRect" parent="SafeArea/GameArea/JarSlot/Jar"]
+z_index = 20
+layout_mode = 1
+anchor_left = 0.13
+anchor_top = 0.13
+anchor_right = 0.17
+anchor_bottom = 0.82
+mouse_filter = 2
+color = Color(0.95, 1, 1, 0.28)
+
+[node name="JarOutline" type="Panel" parent="SafeArea/GameArea/JarSlot/Jar"]
+z_index = 20
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_glass_outline")
+
+[node name="JarRim" type="Panel" parent="SafeArea/GameArea/JarSlot/Jar"]
+z_index = 20
+layout_mode = 1
+anchor_left = -0.035
+anchor_top = 0.02
+anchor_right = 1.035
+anchor_bottom = 0.115
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jar_rim")
+
+[node name="BottomBar" type="HBoxContainer" parent="SafeArea/GameArea"]
+layout_mode = 1
+anchor_top = 0.88
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 24
+
+[node name="WaterButton" type="Button" parent="SafeArea/GameArea/BottomBar"]
+custom_minimum_size = Vector2(176, 76)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.08, 0.2, 0.23, 1)
+theme_override_colors/font_hover_color = Color(0.08, 0.2, 0.23, 1)
+theme_override_colors/font_pressed_color = Color(0.95, 1, 0.96, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_water_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+text = "Water"
+
+[node name="Spacer" type="Control" parent="SafeArea/GameArea/BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="StallButton" type="Button" parent="SafeArea/GameArea/BottomBar"]
+custom_minimum_size = Vector2(176, 76)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.24, 0.15, 0.07, 1)
+theme_override_colors/font_hover_color = Color(0.24, 0.15, 0.07, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.98, 0.9, 1)
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_stall_button")
+theme_override_styles/hover = SubResource("StyleBoxFlat_button_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_button_pressed")
+text = "Stall"

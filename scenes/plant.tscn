@@ -1,0 +1,43 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/plant.gd" id="1_plant"]
+
+[node name="Plant" type="Control"]
+custom_minimum_size = Vector2(96, 88)
+offset_right = 96.0
+offset_bottom = 88.0
+mouse_filter = 0
+script = ExtResource("1_plant")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Body" type="Polygon2D" parent="Visual"]
+polygon = PackedVector2Array(8, 72, 6, 56, 10, 36, 20, 20, 34, 11, 48, 8, 62, 11, 76, 20, 86, 36, 90, 56, 88, 72, 76, 79, 20, 79)
+color = Color(0.985, 0.985, 0.97, 1)
+
+[node name="BodyOutline" type="Line2D" parent="Visual"]
+points = PackedVector2Array(8, 72, 6, 56, 10, 36, 20, 20, 34, 11, 48, 8, 62, 11, 76, 20, 86, 36, 90, 56, 88, 72, 76, 79, 20, 79)
+width = 3.0
+default_color = Color(0.61, 0.66, 0.64, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+closed = true
+antialiased = true
+
+[node name="LeftEye" type="Polygon2D" parent="Visual"]
+polygon = PackedVector2Array(31, 43, 33, 40, 37, 39, 40, 41, 41, 45, 40, 49, 37, 51, 33, 50, 31, 47)
+color = Color(0.18, 0.22, 0.22, 1)
+
+[node name="RightEye" type="Polygon2D" parent="Visual"]
+polygon = PackedVector2Array(55, 43, 57, 40, 61, 39, 64, 41, 65, 45, 64, 49, 61, 51, 57, 50, 55, 47)
+color = Color(0.18, 0.22, 0.22, 1)
+
+[node name="Mouth" type="Line2D" parent="Visual"]
+points = PackedVector2Array(41, 57, 44, 60, 48, 62, 52, 60, 55, 57)
+width = 3.0
+default_color = Color(0.18, 0.22, 0.22, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
